@@ -12,7 +12,7 @@ lazy val root = (project in file("."))
   .aggregate(
     `pipeline-sdk`,
     `pipeline-interpreter`,
-    `pipeline-deployment-ga`
+    `pipeline-deployment-gha`
   )
 
 lazy val `pipeline-sdk` = project in file("./pipeline-sdk")
@@ -20,7 +20,7 @@ lazy val `pipeline-sdk` = project in file("./pipeline-sdk")
 lazy val `pipeline-interpreter` = (project in file("./pipeline-interpreter"))
   .dependsOn(`pipeline-sdk`)
 
-lazy val `pipeline-deployment-ga` = (project in file("./pipeline-deployment-ga"))
+lazy val `pipeline-deployment-gha` = (project in file("./pipeline-deployment-gha"))
   .dependsOn(`pipeline-interpreter`)
 
 addCommandAlias("runScalafmt", ";scalafmt;scalafmtSbt")
