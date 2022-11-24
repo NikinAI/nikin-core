@@ -18,6 +18,10 @@ lazy val root = (project in file("."))
 lazy val `pipeline-sdk` = project in file("./pipeline-sdk")
 
 lazy val `pipeline-interpreter` = (project in file("./pipeline-interpreter"))
+  .settings(
+    // https://mvnrepository.com/artifact/org.apache.spark/spark-sql
+    libraryDependencies += "org.apache.spark" %% "spark-sql" % "3.3.1"
+  )
   .dependsOn(`pipeline-sdk`)
 
 lazy val `pipeline-deployment-gha` = (project in file("./pipeline-deployment-gha"))
