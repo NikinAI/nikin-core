@@ -26,4 +26,8 @@ object Dependencies {
     lazy val logback            = "ch.qos.logback" % "logback-classic"  % "1.4.5"
   }
 
+  object TypedGraph {
+    lazy val core = "typed-graph-core" %% "typed-graph-core" % "0.1.0-SNAPSHOT"
+  }
+
 }

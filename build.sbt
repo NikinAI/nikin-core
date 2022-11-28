@@ -24,7 +24,12 @@ lazy val root = (project in file("."))
     `pipeline-deployment-gha`
   )
 
-lazy val `pipeline-sdk` = project in file("./pipeline-sdk")
+lazy val `pipeline-sdk` =
+  project
+    .in(file("./pipeline-sdk"))
+    .settings(
+      libraryDependencies ++= Seq(TypedGraph.core)
+    )
 
 lazy val `pipeline-interpreter` = (project in file("./pipeline-interpreter"))
   .settings(
