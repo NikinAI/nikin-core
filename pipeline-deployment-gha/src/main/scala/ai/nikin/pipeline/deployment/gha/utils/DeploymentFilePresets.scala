@@ -1,6 +1,6 @@
 package ai.nikin.pipeline.deployment.gha.utils
 
-import ai.nikin.pipeline.deployment.gha.models.DeltaTable
+import ai.nikin.pipeline.deployment.gha.models.{DeltaTable, SparkApp}
 
 trait DeploymentFilePresets {
   def workflowHeader(workflowName: String, branches: Seq[String]): String =
@@ -12,7 +12,7 @@ trait DeploymentFilePresets {
       |    branches: [ ${branches.mkString(",")} ]
       |""".stripMargin
 
-  def generateDeltaTable(deltaTable: DeltaTable): String =
+  def runDeltaLakeKeeper(deltaTable: DeltaTable): String =
     s"""
       |generate-delta-tables:
       |    runs-on: ubuntu-latest
@@ -22,13 +22,13 @@ trait DeploymentFilePresets {
       |        with:
       |          repository: ${deltaTable.repository}
       |          token: $${secrets.GH_TOKEN}
-      |          path: ${deltaTable.repositoryPath}
+      |          path: defaultRepository
       |      - name: Run Delta Lake Tables Generation
-      |        working-directory: ${deltaTable.repositoryPath}
+      |        working-directory: defaultRepository
       |        run: sbt run
       |""".stripMargin
 
-  def deployJarToS3: String =
+  def uploadToS3(localPath: String, s3Path: String): String =
     s"""
       |deploy-jar-to-s3:
       |    runs-on: ubuntu-latest
@@ -44,14 +44,14 @@ trait DeploymentFilePresets {
       |      - name: S3 Upload Jar
       |        uses: tpaschalis/s3-sync-action@master
       |    env:
-      |      AWS_S3_BUCKET: $${{ secrets.AWS_S3_BUCKET }}/jar/
+      |      AWS_S3_BUCKET: $${{ secrets.AWS_S3_BUCKET }}/$s3Path/
       |      AWS_ACCESS_KEY_ID: $${{ secrets.AWS_ACCESS_KEY_ID }}
       |      AWS_SECRET_ACCESS_KEY: $${{ secrets.AWS_SECRET_ACCESS_KEY }}
       |      AWS_REGION: 'eu-west-1'
-      |      FILE: 'target/scala-2.13/*.jar'
+      |      FILE: '$localPath'
       |""".stripMargin
 
-  def runSparkJob(clusterID: String, jobName: String, mainClass: String, jarPath: String): String =
+  def runSparkJob(clusterID: String, sparkApp: SparkApp): String =
     s"""
       |run-job:
       |    runs-on: ubuntu-latest
@@ -64,6 +64,10 @@ trait DeploymentFilePresets {
       |          aws configure set aws_secret_access_key $${{ secrets.AWS_SECRET_ACCESS_KEY }}
       |          aws configure set default.region eu-west-1
       |      - name: Run Spark Job
-      |        run: aws emr add-steps --cluster-id "$clusterID" --steps Type=Spark,Name="$jobName",ActionOnFailure=CONTINUE,Args=[--class,$mainClass,$jarPath]
+      |        run: |
+      |        aws emr add-steps --cluster-id "$clusterID" --steps Type=Spark,Name="${sparkApp
+        .jobName}",ActionOnFailure=CONTINUE,Args=[--class,${sparkApp
+        .mainClass},s3://nikinconf/jar/spark-aggregator.jar, --inputPath, ${sparkApp
+        .inputPath}, --outputPath, ${sparkApp.outputPath}]
       |""".stripMargin
 }
