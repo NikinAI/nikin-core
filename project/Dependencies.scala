@@ -1,3 +1,4 @@
+import sbt.Keys.libraryDependencies
 import sbt._
 
 object Dependencies {
@@ -8,6 +9,12 @@ object Dependencies {
 
   object DeltaLake {
     lazy val core = "io.delta" %% "delta-core" % "2.1.1"
+  }
+
+  object ZIO {
+    lazy val schema           = "dev.zio" %% "zio-schema"            % "0.3.1"
+    lazy val schemaDerivation = "dev.zio" %% "zio-schema-derivation" % "0.3.1"
+    lazy val test             = "dev.zio" %% "zio-test"              % "2.0.4"
   }
 
   object Hadoop {

@@ -20,8 +20,7 @@ lazy val `pipeline-sdk` = project in file("./pipeline-sdk")
 lazy val `pipeline-interpreter` = (project in file("./pipeline-interpreter"))
   .settings(
     // https://mvnrepository.com/artifact/org.apache.spark/spark-sql
-    libraryDependencies += "dev.zio" %% "zio-schema"            % "0.3.1",
-    libraryDependencies += "dev.zio" %% "zio-schema-derivation" % "0.3.1"
+    libraryDependencies ++= List(ZIO.schema, ZIO.schemaDerivation, ZIO.test) :+ Spark.sql % "test"
   )
   .dependsOn(`pipeline-sdk`)
 
