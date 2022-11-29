@@ -8,13 +8,13 @@ import munit.FunSuite
 class DslSpec extends FunSuite {
   test("DSL - aggregation to lake") {
     val pipeline: Transformation[RecordA, RecordB] F_>>> Lake[RecordB] =
-      aggregation[RecordA, RecordB]("s1", Sum("col1")) >>> lake[RecordB]("t1")
+      aggregation[RecordA, RecordB]("s1", Sum("col1", "col2")) >>> lake[RecordB]("t1")
 
     println(pipeline)
 
     testContained(
       compileErrors(
-        """ aggregation[RecordB, RecordA]("s1", Sum("col1")) >>> lake[RecordB]("t1") """
+        """ aggregation[RecordB, RecordA]("s1", Sum("col1", "col2")) >>> lake[RecordB]("t1") """
       ),
       "inferred type arguments",
       "do not conform to method",
@@ -31,7 +31,7 @@ class DslSpec extends FunSuite {
 
   test("DSL - lake to aggregation to lake") {
     val pipeline =
-      lake[RecordA]("lA") >>> aggregation[RecordA, RecordB]("tAB", Avg("col1")) >>>
+      lake[RecordA]("lA") >>> aggregation[RecordA, RecordB]("tAB", Avg("col1", "col2")) >>>
         lake[RecordB]("lB")
 
     println(pipeline.inGraph.toDot)
