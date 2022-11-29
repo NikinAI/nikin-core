@@ -7,11 +7,12 @@ case class Aggregation[_IN, _OUT](n: String, fn: AggregationFunction)
 
 object Aggregation {
   sealed trait AggregationFunction {
-    def col: String
+    def inputColumn:  String
+    def outputColumn: String
   }
-  case class Avg(col: String) extends AggregationFunction
-  case class Max(col: String) extends AggregationFunction
-  case class Min(col: String) extends AggregationFunction
-  case class Sum(col: String) extends AggregationFunction
-  case class Count(col: String) extends AggregationFunction
+  case class Avg(inputColumn: String, outputColumn: String) extends AggregationFunction
+  case class Max(inputColumn: String, outputColumn: String) extends AggregationFunction
+  case class Min(inputColumn: String, outputColumn: String) extends AggregationFunction
+  case class Sum(inputColumn: String, outputColumn: String) extends AggregationFunction
+  case class Count(inputColumn: String, outputColumn: String) extends AggregationFunction
 }
