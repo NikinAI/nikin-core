@@ -1,11 +1,8 @@
-package ai.nikin.pipeline.sdk.dsl
+package ai.nikin.pipeline.sdk
 
+import ai.nikin.pipeline.sdk.Aggregation.{Avg, Sum}
 import ai.nikin.pipeline.sdk.TestUtils.testContained
-import ai.nikin.pipeline.sdk.dsl.edge.{lakeToTransform, transformToLake, F_>>>}
-import ai.nikin.pipeline.sdk.dsl.model.{RecordA, RecordB}
-import ai.nikin.pipeline.sdk.dsl.vertices.Aggregation.{Avg, Sum}
-import ai.nikin.pipeline.sdk.dsl.vertices.{aggregation, lake, Aggregation, Lake, Transformation}
-import ai.nikin.typedgraph.core._
+import ai.nikin.pipeline.sdk.model.{RecordA, RecordB}
 import munit.FunSuite
 
 class DslSpec extends FunSuite {

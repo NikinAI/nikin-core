@@ -1,9 +1,9 @@
-package ai.nikin.pipeline.sdk.dsl
+package ai.nikin.pipeline
 
-import ai.nikin.pipeline.sdk.dsl.vertices.{Lake, Transformation}
+import ai.nikin.pipeline.sdk.Aggregation.AggregationFunction
 import ai.nikin.typedgraph.core.{CanBeConnected, IVertex}
 
-package object edge {
+package object sdk {
   type F_>>>[
       FROM <: IVertex[FROM],
       TO <: IVertex[TO] { type IN = FROM#OUT }
@@ -14,4 +14,9 @@ package object edge {
 
   implicit def lakeToTransform[DATA, OUT]: CanBeConnected[Lake[DATA], Flow, Transformation[DATA, OUT]] =
     CanBeConnected[Lake[DATA], Flow, Transformation[DATA, OUT]](Flow)
+
+  def aggregation[IN, OUT](name: String, f: AggregationFunction): Transformation[IN, OUT] =
+    Aggregation(name, f)
+
+  def lake[DATA](name: String): Lake[DATA] = Lake(name)
 }

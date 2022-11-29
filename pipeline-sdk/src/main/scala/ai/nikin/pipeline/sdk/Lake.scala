@@ -1,4 +1,4 @@
-package ai.nikin.pipeline.sdk.dsl.vertices
+package ai.nikin.pipeline.sdk
 
 import ai.nikin.typedgraph.core.Vertex
 

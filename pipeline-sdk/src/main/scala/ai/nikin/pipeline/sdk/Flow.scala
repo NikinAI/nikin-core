@@ -1,4 +1,4 @@
-package ai.nikin.pipeline.sdk.dsl.edge
+package ai.nikin.pipeline.sdk
 
 import ai.nikin.typedgraph.core.{CanBeConnected, Edge, EdgeDependency, IVertex}
 
