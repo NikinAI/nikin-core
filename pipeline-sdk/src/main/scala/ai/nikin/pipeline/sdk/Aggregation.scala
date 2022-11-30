@@ -2,8 +2,8 @@ package ai.nikin.pipeline.sdk
 
 import ai.nikin.pipeline.sdk.Aggregation.AggregationFunction
 
-case class Aggregation[_IN, _OUT](n: String, fn: AggregationFunction)
-    extends Transformation[_IN, _OUT](n)
+case class Aggregation[_IN, _OUT](name: String, aggFunction: AggregationFunction)
+    extends Transformation[_IN, _OUT](s"aggregation-$name")
 
 object Aggregation {
   sealed trait AggregationFunction {
