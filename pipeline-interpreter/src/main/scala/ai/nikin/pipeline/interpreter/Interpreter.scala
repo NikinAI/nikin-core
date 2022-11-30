@@ -4,12 +4,8 @@ import ai.nikin.pipeline.interpreter.ddl.DDLMapper
 import zio.schema.Schema
 import zio.schema.meta.MetaSchema
 
-trait Interpreter {
-  def generateDDL[T <: Product](implicit schema: Schema[T]): String
-}
-
-object DeltaLakeKeeperInterpreter extends Interpreter {
-  override def generateDDL[T <: Product](implicit schema: Schema[T]): String = {
+object DeltaLakeDDLGenerator {
+  def generateDDL[T <: Product](implicit schema: Schema[T]): String = {
     val init     = "CREATE TABLE IF NOT EXISTS"
     val typeName =
       schema.ast match {
