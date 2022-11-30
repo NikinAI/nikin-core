@@ -9,7 +9,7 @@ object Schemas {
     Schema.Sequence[Seq[T], T, T => T](
       schema,
       _.toSeq,
-      seq => zio.Chunk.fromIterable(seq),
+      zio.Chunk.fromIterable(_),
       identity = identity(_)
     )
 
@@ -17,7 +17,7 @@ object Schemas {
     Schema.Sequence[Set[T], T, T => T](
       schema,
       _.toSet,
-      seq => zio.Chunk.fromIterable(seq),
+      zio.Chunk.fromIterable(_),
       identity = identity(_)
     )
 
@@ -25,7 +25,7 @@ object Schemas {
     Schema.Sequence[Array[T], T, T => T](
       schema,
       _.toArray,
-      seq => zio.Chunk.fromIterable(seq),
+      zio.Chunk.fromIterable(_),
       identity = identity(_)
     )
 
@@ -33,7 +33,7 @@ object Schemas {
     Schema.Sequence[List[T], T, T => T](
       schema,
       _.toList,
-      seq => zio.Chunk.fromIterable(seq),
+      zio.Chunk.fromIterable(_),
       identity = identity(_)
     )
 }

@@ -34,42 +34,93 @@ object InterpreterSpec extends ZIOSpecDefault {
   override def spec: Spec[TestEnvironment with Scope, Any] =
     suite("InterpreterSpec")(
       test("should correctly generate DDL for simple case class") {
-        val sparkResult = Encoders.product[Test].schema.toDDL
-        val ourResult   = Interpreter.mapToDDL[Test](DeriveSchema.gen[Test])
-        assertTrue(ourResult == sparkResult)
+        val expectedResult =
+          """CREATE TABLE IF NOT EXISTS Test(
+                            |    a INT NOT NULL,
+                            |    b INT NOT NULL
+                            |) USING DELTA
+                            |    LOCATION s3a://BUCKET_PLACEHOLDER/Test""".stripMargin
+        val ourResult      = DeltaLakeKeeperInterpreter.generateDDL[Test](DeriveSchema.gen[Test])
+        assertTrue(ourResult == expectedResult)
       },
       test("should correctly generate DDL for case class with optionalFields") {
-        val sparkResult = Encoders.product[TestOpt].schema.toDDL
-        val ourResult   = Interpreter.mapToDDL[TestOpt](DeriveSchema.gen[TestOpt])
-        assertTrue(ourResult == sparkResult)
+        val expectedResult =
+          """CREATE TABLE IF NOT EXISTS TestOpt(
+                               |    a INT,
+                               |    b INT NOT NULL
+                               |) USING DELTA
+                               |    LOCATION s3a://BUCKET_PLACEHOLDER/TestOpt""".stripMargin
+        val ourResult      = DeltaLakeKeeperInterpreter.generateDDL[TestOpt](DeriveSchema.gen[TestOpt])
+        assertTrue(ourResult == expectedResult)
       },
       test("should correctly generate DDL for case class with tuple") {
-        val sparkResult = Encoders.product[TestTuple].schema.toDDL
-        val ourResult   = Interpreter.mapToDDL[TestTuple](DeriveSchema.gen[TestTuple])
-        assertTrue(ourResult == sparkResult)
+        val expectedResult =
+          """CREATE TABLE IF NOT EXISTS TestTuple(
+            |    a STRUCT<_1: INT, _2: STRING, _3: BOOLEAN, _4: DECIMAL(38,0), _5: DECIMAL(38,18), _6: STRING, _7: INT, _8: BOOLEAN, _9: BIGINT, _10: FLOAT>
+            |) USING DELTA
+            |    LOCATION s3a://BUCKET_PLACEHOLDER/TestTuple""".stripMargin
+        val ourResult      =
+          DeltaLakeKeeperInterpreter.generateDDL[TestTuple](DeriveSchema.gen[TestTuple])
+        assertTrue(ourResult == expectedResult)
       },
       test("should correctly generate DDL for case class with complex maps") {
-        val sparkResult     = Encoders.product[TestMap].schema.toDDL
+        val expectedResult =
+          """CREATE TABLE IF NOT EXISTS TestMap(
+            |    a MAP<STRUCT<a: INT, b: INT>, INT>,
+            |    b MAP<INT, STRING>
+            |) USING DELTA
+            |    LOCATION s3a://BUCKET_PLACEHOLDER/TestMap""".stripMargin
+
         implicit val schema = DeriveSchema.gen[Test]
-        val ourResult       = Interpreter.mapToDDL[TestMap](DeriveSchema.gen[TestMap])
-        assertTrue(ourResult == sparkResult)
+        val ourResult       = DeltaLakeKeeperInterpreter.generateDDL[TestMap](DeriveSchema.gen[TestMap])
+        assertTrue(ourResult == expectedResult)
       },
       test("should correctly generate DDL for case class with all primitive") {
-        val sparkResult = Encoders.product[TestPrimitive].schema.toDDL
-        val ourResult   = Interpreter.mapToDDL[TestPrimitive](DeriveSchema.gen[TestPrimitive])
-        assertTrue(ourResult == sparkResult)
+        val expectedResult =
+          """CREATE TABLE IF NOT EXISTS TestPrimitive(
+            |    a INT NOT NULL,
+            |    b BOOLEAN NOT NULL,
+            |    c TINYINT NOT NULL,
+            |    d SMALLINT NOT NULL,
+            |    e INT NOT NULL,
+            |    f BIGINT NOT NULL,
+            |    g FLOAT NOT NULL,
+            |    h DOUBLE NOT NULL,
+            |    i DECIMAL(38,0),
+            |    k DECIMAL(38,18)
+            |) USING DELTA
+            |    LOCATION s3a://BUCKET_PLACEHOLDER/TestPrimitive""".stripMargin
+
+        val ourResult =
+          DeltaLakeKeeperInterpreter.generateDDL[TestPrimitive](DeriveSchema.gen[TestPrimitive])
+        assertTrue(ourResult == expectedResult)
       },
       test("should correctly generate DDL for case class with binary") {
-        val sparkResult     = Encoders.product[TestBinary].schema.toDDL
+        val expectedResult =
+          """CREATE TABLE IF NOT EXISTS TestBinary(
+            |    a BINARY
+            |) USING DELTA
+            |    LOCATION s3a://BUCKET_PLACEHOLDER/TestBinary""".stripMargin
+
         implicit val schema = DeriveSchema.gen[TestBinary]
-        val ourResult       = Interpreter.mapToDDL[TestBinary](DeriveSchema.gen[TestBinary])
-        assertTrue(ourResult == sparkResult)
+        val ourResult       =
+          DeltaLakeKeeperInterpreter.generateDDL[TestBinary](DeriveSchema.gen[TestBinary])
+        assertTrue(ourResult == expectedResult)
       },
       test("should correctly generate DDL for all array collections") {
-        val sparkResult     = Encoders.product[TestArrays].schema.toDDL
+        val expectedResult  =
+          """CREATE TABLE IF NOT EXISTS TestArrays(
+            |    a ARRAY<INT>,
+            |    b ARRAY<INT>,
+            |    c ARRAY<INT>,
+            |    d ARRAY<INT>
+            |) USING DELTA
+            |    LOCATION s3a://BUCKET_PLACEHOLDER/TestArrays""".stripMargin
         implicit val schema = DeriveSchema.gen[TestArrays]
-        val ourResult       = Interpreter.mapToDDL[TestArrays](DeriveSchema.gen[TestArrays])
-        assertTrue(ourResult == sparkResult)
+        val ourResult       =
+          DeltaLakeKeeperInterpreter.generateDDL[TestArrays](DeriveSchema.gen[TestArrays])
+
+        assertTrue(ourResult == expectedResult)
       }
     )
 }

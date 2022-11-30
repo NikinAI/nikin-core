@@ -1,8 +1,7 @@
-import sbt.Keys.libraryDependencies
+import sbt.Keys.{libraryDependencies, scalaVersion}
 import sbt._
 
 object Dependencies {
-
   object Spark {
     lazy val sql = "org.apache.spark" %% "spark-sql" % "3.3.1"
   }
@@ -14,7 +13,7 @@ object Dependencies {
   object ZIO {
     lazy val schema           = "dev.zio" %% "zio-schema"            % "0.3.1"
     lazy val schemaDerivation = "dev.zio" %% "zio-schema-derivation" % "0.3.1"
-    lazy val test             = "dev.zio" %% "zio-test"              % "2.0.4"
+    lazy val test             = "dev.zio" %% "zio-test"              % "2.0.4" % Test
   }
 
   object Hadoop {

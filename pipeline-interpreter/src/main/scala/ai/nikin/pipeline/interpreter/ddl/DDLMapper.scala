@@ -1,8 +1,8 @@
-package ai.nikin.pipeline.interpreter
+package ai.nikin.pipeline.interpreter.ddl
 
-import ai.nikin.pipeline.interpreter.DDL._
+import ai.nikin.pipeline.interpreter.ddl.DDL._
 import zio.schema.Schema.{Lazy, Primitive, Transform}
-import zio.schema.{DynamicValue, Schema, StandardType}
+import zio.schema.{Schema, StandardType}
 
 object DDLMapper {
   def mapToDDLType[T <: Product](input: Schema[T]): DDLType =

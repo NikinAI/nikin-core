@@ -1,4 +1,4 @@
-package ai.nikin.pipeline.interpreter
+package ai.nikin.pipeline.interpreter.ddl
 
 object DDL {
   sealed trait DDLType {
@@ -95,7 +95,7 @@ object DDL {
 
   case class MainContainer(values: List[(String, DDLType)]) extends DDLContainer {
     override def toDDL: String =
-      values.map { case (name, ddl) => s"$name ${ddl.toDDL}" }.mkString(",")
+      values.map { case (name, ddl) => s"    $name ${ddl.toDDL}" }.mkString(",\n")
   }
 
   case class StructContainer(values: List[(String, DDLType)]) extends DDLContainer {
