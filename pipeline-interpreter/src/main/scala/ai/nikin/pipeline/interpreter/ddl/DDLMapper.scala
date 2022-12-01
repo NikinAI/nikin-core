@@ -47,7 +47,7 @@ object DDLMapper {
   private def arrayDDL[T](elemSchema: Schema[T]): DDLType =
     ArrayContainer(schemaDDL(elemSchema, true))
 
-  private def primitiveDDL[T](standardType: StandardType[T], isNullable: Boolean = false): DDLType =
+  private def primitiveDDL[T](standardType: StandardType[T], isNullable: Boolean): DDLType =
     standardType match {
       case StandardType.StringType     => StringType(isNullable)
       case StandardType.BoolType       => BoolType(isNullable)
@@ -59,5 +59,6 @@ object DDLMapper {
       case StandardType.DoubleType     => DoubleType(isNullable)
       case StandardType.BigIntegerType => BigIntegerType
       case StandardType.BigDecimalType => BigDecimalType
+      case _                           => throw new Exception(s"Type $standardType is not supported!")
     }
 }
