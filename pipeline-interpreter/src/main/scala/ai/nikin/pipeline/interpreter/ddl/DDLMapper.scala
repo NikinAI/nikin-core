@@ -59,5 +59,6 @@ object DDLMapper {
       case StandardType.DoubleType     => DoubleType(isNullable)
       case StandardType.BigIntegerType => BigIntegerType
       case StandardType.BigDecimalType => BigDecimalType
+      case _                           => throw new Exception(s"Type $standardType is not supported!")
     }
 }

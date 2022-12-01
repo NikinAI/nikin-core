@@ -1,6 +1,6 @@
 package ai.nikin.pipeline.interpreter
 
-import zio.schema.{DeriveSchema, Schema}
+import zio.schema.Schema
 
 import scala.reflect.ClassTag
 

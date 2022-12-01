@@ -1,6 +1,5 @@
 package ai.nikin.pipeline.interpreter
 
-import org.apache.spark.sql.Encoders
 import zio.Scope
 import zio.schema.DeriveSchema
 import zio.test.{ZIOSpecDefault, _}
@@ -40,7 +39,7 @@ object InterpreterSpec extends ZIOSpecDefault {
                             |    b INT NOT NULL
                             |) USING DELTA
                             |    LOCATION s3a://BUCKET_PLACEHOLDER/Test""".stripMargin
-        val ourResult      = DeltaLakeKeeperInterpreter.generateDDL[Test](DeriveSchema.gen[Test])
+        val ourResult      = DeltaLakeDDLGenerator.generateDDL[Test](DeriveSchema.gen[Test])
         assertTrue(ourResult == expectedResult)
       },
       test("should correctly generate DDL for case class with optionalFields") {
@@ -50,7 +49,7 @@ object InterpreterSpec extends ZIOSpecDefault {
                                |    b INT NOT NULL
                                |) USING DELTA
                                |    LOCATION s3a://BUCKET_PLACEHOLDER/TestOpt""".stripMargin
-        val ourResult      = DeltaLakeKeeperInterpreter.generateDDL[TestOpt](DeriveSchema.gen[TestOpt])
+        val ourResult      = DeltaLakeDDLGenerator.generateDDL[TestOpt](DeriveSchema.gen[TestOpt])
         assertTrue(ourResult == expectedResult)
       },
       test("should correctly generate DDL for case class with tuple") {
@@ -59,8 +58,7 @@ object InterpreterSpec extends ZIOSpecDefault {
             |    a STRUCT<_1: INT, _2: STRING, _3: BOOLEAN, _4: DECIMAL(38,0), _5: DECIMAL(38,18), _6: STRING, _7: INT, _8: BOOLEAN, _9: BIGINT, _10: FLOAT>
             |) USING DELTA
             |    LOCATION s3a://BUCKET_PLACEHOLDER/TestTuple""".stripMargin
-        val ourResult      =
-          DeltaLakeKeeperInterpreter.generateDDL[TestTuple](DeriveSchema.gen[TestTuple])
+        val ourResult      = DeltaLakeDDLGenerator.generateDDL[TestTuple](DeriveSchema.gen[TestTuple])
         assertTrue(ourResult == expectedResult)
       },
       test("should correctly generate DDL for case class with complex maps") {
@@ -72,7 +70,7 @@ object InterpreterSpec extends ZIOSpecDefault {
             |    LOCATION s3a://BUCKET_PLACEHOLDER/TestMap""".stripMargin
 
         implicit val schema = DeriveSchema.gen[Test]
-        val ourResult       = DeltaLakeKeeperInterpreter.generateDDL[TestMap](DeriveSchema.gen[TestMap])
+        val ourResult       = DeltaLakeDDLGenerator.generateDDL[TestMap](DeriveSchema.gen[TestMap])
         assertTrue(ourResult == expectedResult)
       },
       test("should correctly generate DDL for case class with all primitive") {
@@ -92,7 +90,7 @@ object InterpreterSpec extends ZIOSpecDefault {
             |    LOCATION s3a://BUCKET_PLACEHOLDER/TestPrimitive""".stripMargin
 
         val ourResult =
-          DeltaLakeKeeperInterpreter.generateDDL[TestPrimitive](DeriveSchema.gen[TestPrimitive])
+          DeltaLakeDDLGenerator.generateDDL[TestPrimitive](DeriveSchema.gen[TestPrimitive])
         assertTrue(ourResult == expectedResult)
       },
       test("should correctly generate DDL for case class with binary") {
@@ -103,8 +101,7 @@ object InterpreterSpec extends ZIOSpecDefault {
             |    LOCATION s3a://BUCKET_PLACEHOLDER/TestBinary""".stripMargin
 
         implicit val schema = DeriveSchema.gen[TestBinary]
-        val ourResult       =
-          DeltaLakeKeeperInterpreter.generateDDL[TestBinary](DeriveSchema.gen[TestBinary])
+        val ourResult       = DeltaLakeDDLGenerator.generateDDL[TestBinary](DeriveSchema.gen[TestBinary])
         assertTrue(ourResult == expectedResult)
       },
       test("should correctly generate DDL for all array collections") {
@@ -117,8 +114,7 @@ object InterpreterSpec extends ZIOSpecDefault {
             |) USING DELTA
             |    LOCATION s3a://BUCKET_PLACEHOLDER/TestArrays""".stripMargin
         implicit val schema = DeriveSchema.gen[TestArrays]
-        val ourResult       =
-          DeltaLakeKeeperInterpreter.generateDDL[TestArrays](DeriveSchema.gen[TestArrays])
+        val ourResult       = DeltaLakeDDLGenerator.generateDDL[TestArrays](DeriveSchema.gen[TestArrays])
 
         assertTrue(ourResult == expectedResult)
       }
