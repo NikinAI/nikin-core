@@ -28,7 +28,8 @@ lazy val `pipeline-sdk` = project in file("./pipeline-sdk")
 
 lazy val `pipeline-interpreter` = (project in file("./pipeline-interpreter"))
   .settings(
-    libraryDependencies ++= List(ZIO.schema, ZIO.schemaDerivation, ZIO.test)
+    libraryDependencies ++= List(ZIO.schema, ZIO.schemaDerivation, ZIO.test, ZIO.testSbt),
+    testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework")
   )
   .dependsOn(`pipeline-sdk`)
 

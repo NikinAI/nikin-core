@@ -14,6 +14,7 @@ object Dependencies {
     lazy val schema           = "dev.zio" %% "zio-schema"            % "0.3.1"
     lazy val schemaDerivation = "dev.zio" %% "zio-schema-derivation" % "0.3.1"
     lazy val test             = "dev.zio" %% "zio-test"              % "2.0.4" % Test
+    lazy val testSbt          = "dev.zio" %% "zio-test-sbt"          % "2.0.4" % Test
   }
 
   object Hadoop {
