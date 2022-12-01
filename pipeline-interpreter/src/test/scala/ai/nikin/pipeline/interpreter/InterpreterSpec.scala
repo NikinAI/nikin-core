@@ -1,17 +1,31 @@
 package ai.nikin.pipeline.interpreter
 
 import zio.Scope
-import zio.schema.DeriveSchema
+import zio.schema.{DeriveSchema, Schema}
 import zio.test.{ZIOSpecDefault, _}
 import Schemas._
 
 object InterpreterSpec extends ZIOSpecDefault {
   case class Test(a: Int, b: Int)
+
+  object Test {
+    implicit val schema: Schema[Test] = DeriveSchema.gen[Test]
+  }
+
   case class TestOpt(a: Option[Int], b: Int)
+
+  object TestOpt {
+    implicit val schema: Schema[TestOpt] = DeriveSchema.gen[TestOpt]
+
+  }
 
   case class TestTuple(
       a: (Int, String, Boolean, BigInt, BigDecimal, String, Int, Boolean, Long, Float)
   )
+
+  object TestTuple {
+    implicit val schema: Schema[TestTuple] = DeriveSchema.gen[TestTuple]
+  }
 
   case class TestPrimitive(
       a: Int,
@@ -26,9 +40,27 @@ object InterpreterSpec extends ZIOSpecDefault {
       k: BigDecimal
   )
 
+  object TestPrimitive {
+    implicit val schema: Schema[TestPrimitive] = DeriveSchema.gen[TestPrimitive]
+  }
+
   case class TestMap(a: Map[Test, Int], b: Map[Int, String])
+
+  object TestMap {
+    implicit val schema = DeriveSchema.gen[TestMap]
+  }
+
   case class TestBinary(a: Array[Byte])
+
+  object TestBinary {
+    implicit val schema = DeriveSchema.gen[TestBinary]
+  }
+
   case class TestArrays(a: Array[Int], b: Seq[Int], c: Set[Int], d: List[Int])
+
+  object TestArrays {
+    implicit val schema = DeriveSchema.gen[TestArrays]
+  }
 
   override def spec: Spec[TestEnvironment with Scope, Any] =
     suite("InterpreterSpec")(
@@ -39,7 +71,7 @@ object InterpreterSpec extends ZIOSpecDefault {
                             |    b INT NOT NULL
                             |) USING DELTA
                             |    LOCATION s3a://BUCKET_PLACEHOLDER/Test""".stripMargin
-        val ourResult      = DeltaLakeDDLGenerator.generateDDL[Test](DeriveSchema.gen[Test])
+        val ourResult      = DeltaLakeDDLGenerator.generateDDL[Test]
         assertTrue(ourResult == expectedResult)
       },
       test("should correctly generate DDL for case class with optionalFields") {
@@ -49,7 +81,7 @@ object InterpreterSpec extends ZIOSpecDefault {
                                |    b INT NOT NULL
                                |) USING DELTA
                                |    LOCATION s3a://BUCKET_PLACEHOLDER/TestOpt""".stripMargin
-        val ourResult      = DeltaLakeDDLGenerator.generateDDL[TestOpt](DeriveSchema.gen[TestOpt])
+        val ourResult      = DeltaLakeDDLGenerator.generateDDL[TestOpt]
         assertTrue(ourResult == expectedResult)
       },
       test("should correctly generate DDL for case class with tuple") {
@@ -58,7 +90,7 @@ object InterpreterSpec extends ZIOSpecDefault {
             |    a STRUCT<_1: INT, _2: STRING, _3: BOOLEAN, _4: DECIMAL(38,0), _5: DECIMAL(38,18), _6: STRING, _7: INT, _8: BOOLEAN, _9: BIGINT, _10: FLOAT>
             |) USING DELTA
             |    LOCATION s3a://BUCKET_PLACEHOLDER/TestTuple""".stripMargin
-        val ourResult      = DeltaLakeDDLGenerator.generateDDL[TestTuple](DeriveSchema.gen[TestTuple])
+        val ourResult      = DeltaLakeDDLGenerator.generateDDL[TestTuple]
         assertTrue(ourResult == expectedResult)
       },
       test("should correctly generate DDL for case class with complex maps") {
@@ -69,7 +101,7 @@ object InterpreterSpec extends ZIOSpecDefault {
             |) USING DELTA
             |    LOCATION s3a://BUCKET_PLACEHOLDER/TestMap""".stripMargin
 
-        val ourResult = DeltaLakeDDLGenerator.generateDDL[TestMap](DeriveSchema.gen[TestMap])
+        val ourResult = DeltaLakeDDLGenerator.generateDDL[TestMap]
         assertTrue(ourResult == expectedResult)
       },
       test("should correctly generate DDL for case class with all primitive") {
@@ -88,8 +120,7 @@ object InterpreterSpec extends ZIOSpecDefault {
             |) USING DELTA
             |    LOCATION s3a://BUCKET_PLACEHOLDER/TestPrimitive""".stripMargin
 
-        val ourResult =
-          DeltaLakeDDLGenerator.generateDDL[TestPrimitive](DeriveSchema.gen[TestPrimitive])
+        val ourResult = DeltaLakeDDLGenerator.generateDDL[TestPrimitive]
         assertTrue(ourResult == expectedResult)
       },
       test("should correctly generate DDL for case class with binary") {
@@ -99,7 +130,7 @@ object InterpreterSpec extends ZIOSpecDefault {
             |) USING DELTA
             |    LOCATION s3a://BUCKET_PLACEHOLDER/TestBinary""".stripMargin
 
-        val ourResult = DeltaLakeDDLGenerator.generateDDL[TestBinary](DeriveSchema.gen[TestBinary])
+        val ourResult = DeltaLakeDDLGenerator.generateDDL[TestBinary]
         assertTrue(ourResult == expectedResult)
       },
       test("should correctly generate DDL for all array collections") {
@@ -112,7 +143,8 @@ object InterpreterSpec extends ZIOSpecDefault {
             |) USING DELTA
             |    LOCATION s3a://BUCKET_PLACEHOLDER/TestArrays""".stripMargin
 
-        val ourResult = DeltaLakeDDLGenerator.generateDDL[TestArrays](DeriveSchema.gen[TestArrays])
+        val ourResult = DeltaLakeDDLGenerator.generateDDL[TestArrays]
+
         assertTrue(ourResult == expectedResult)
       }
     )
