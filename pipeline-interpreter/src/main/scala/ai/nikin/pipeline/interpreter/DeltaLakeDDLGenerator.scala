@@ -5,7 +5,7 @@ import zio.schema.Schema
 import zio.schema.meta.MetaSchema
 
 object DeltaLakeDDLGenerator {
-  def generateDDL[T <: Product](implicit schema: Schema[T]): String = {
+  def generateDDL[T](implicit schema: Schema[T]): String = {
     val init     = "CREATE TABLE IF NOT EXISTS"
     val typeName =
       schema.ast match {
