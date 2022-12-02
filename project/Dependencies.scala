@@ -1,4 +1,3 @@
-import sbt.Keys.{libraryDependencies, scalaVersion}
 import sbt._
 
 object Dependencies {
