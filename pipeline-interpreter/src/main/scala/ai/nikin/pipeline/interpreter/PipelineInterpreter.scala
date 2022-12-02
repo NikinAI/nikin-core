@@ -4,7 +4,6 @@ import ai.nikin.pipeline.interpreter.Artifact.{AggregationArtifact, LakeArtifact
 import ai.nikin.pipeline.sdk.{Aggregation, Lake}
 import ai.nikin.typedgraph.core.Vertex.AnyVertex
 import ai.nikin.typedgraph.core.Graph
-import zio.schema.DeriveSchema
 
 object PipelineInterpreter {
   case class Test()

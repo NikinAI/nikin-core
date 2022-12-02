@@ -12,7 +12,8 @@ ThisBuild / scalacOptions ++=
     "-Xlint:infer-any", // Warn when a type argument is inferred to be Any.
     "-Xlint:constant", // Evaluation of a constant arithmetic expression results in an error.
     "-Ywarn-unused:imports", "-Xfatal-warnings", "-deprecation", "-Ywarn-dead-code",
-    "-Ywarn-unused:params", "-Ywarn-unused:locals", "-Ywarn-value-discard", "-Ywarn-unused:privates"
+    "-Ywarn-unused:params", "-Ywarn-unused:locals", "-Ywarn-value-discard",
+    "-Ywarn-unused:privates", "-Ymacro-annotations"
   )
 lazy val root = (project in file("."))
   .settings(
@@ -28,7 +29,7 @@ lazy val `pipeline-sdk` =
   project
     .in(file("./pipeline-sdk"))
     .settings(
-      libraryDependencies ++= Seq(TypedGraph.core, ZIO.schema, ZIO.schemaDerivation)
+      libraryDependencies ++= Seq(TypedGraph.core, ZIO.schema, ZIO.schemaDerivation, Scala.reflect)
     )
 
 lazy val `pipeline-interpreter` = (project in file("./pipeline-interpreter"))
