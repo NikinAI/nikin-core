@@ -2,9 +2,7 @@ package ai.nikin.pipeline.interpreter
 
 import ai.nikin.pipeline.interpreter.Artifact.{AggregationArtifact, LakeArtifact}
 import ai.nikin.pipeline.sdk.{Aggregation, Lake}
-import ai.nikin.typedgraph.core.Vertex.AnyVertex
-import ai.nikin.typedgraph.core.Graph
-import zio.schema.DeriveSchema
+import ai.nikin.typedgraph.core.{AnyVertex, Graph}
 
 object PipelineInterpreter {
   case class Test()
