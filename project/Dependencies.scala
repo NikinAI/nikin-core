@@ -3,8 +3,12 @@ import sbt._
 
 object Dependencies {
 
+  object Versions {
+    val scala = "2.13.10"
+  }
+
   object Scala {
-    lazy val reflect = "org.scala-lang" % "scala-reflect" % "2.13.10"
+    lazy val reflect = "org.scala-lang" % "scala-reflect" % Versions.scala
   }
 
   object Spark {
