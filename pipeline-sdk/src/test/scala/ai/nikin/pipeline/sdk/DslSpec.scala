@@ -1,11 +1,9 @@
 package ai.nikin.pipeline.sdk
 
 import ai.nikin.pipeline.sdk.Aggregation.{Avg, Sum}
-import ai.nikin.pipeline.sdk.TestUtils.testContained
 import ai.nikin.pipeline.sdk.model.{RecordA, RecordB}
-import munit.FunSuite
 
-class DslSpec extends FunSuite {
+class DslSpec extends TestUtils {
   test("DSL - aggregation to lake") {
     val pipeline: Transformation[RecordA, RecordB] F_>>> Lake[RecordB] =
       aggregation[RecordA, RecordB]("s1", Sum("col1", "col2")) >>> lake[RecordB]("t1")
@@ -25,7 +23,7 @@ class DslSpec extends FunSuite {
       compileErrors(
         """ lake[RecordB]("t1") >>> lake[RecordB]("t2") """
       ),
-      "could not find implicit value for parameter"
+      "To enable this connectivity, add:"
     )
   }
 
@@ -34,7 +32,7 @@ class DslSpec extends FunSuite {
       lake[RecordA]("lA") >>> aggregation[RecordA, RecordB]("tAB", Avg("col1", "col2")) >>>
         lake[RecordB]("lB")
 
-    println(pipeline.inGraph.toDot)
+    println(pipeline.asGraph)
     println(pipeline)
   }
 }

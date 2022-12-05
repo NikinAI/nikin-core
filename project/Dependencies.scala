@@ -27,7 +27,7 @@ object Dependencies {
   }
 
   object TypedGraph {
-    lazy val core = "typed-graph-core" %% "typed-graph-core" % "0.1.0-SNAPSHOT"
+    lazy val core = "ai.nikin" %% "typed-graph" % "0.1.0"
   }
 
 }
