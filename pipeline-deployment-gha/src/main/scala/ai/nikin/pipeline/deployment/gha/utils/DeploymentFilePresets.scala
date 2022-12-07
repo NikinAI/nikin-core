@@ -1,6 +1,6 @@
 package ai.nikin.pipeline.deployment.gha.utils
 
-import ai.nikin.pipeline.deployment.gha.models.{DeltaTable, SparkApp}
+import ai.nikin.pipeline.deployment.gha.models.{DeltaLakeKeeper, SparkApp}
 
 trait DeploymentFilePresets {
   def workflowHeader(workflowName: String, branches: Seq[String]): String =
@@ -12,7 +12,7 @@ trait DeploymentFilePresets {
       |    branches: [ ${branches.mkString(",")} ]
       |""".stripMargin
 
-  def runDeltaLakeKeeper(deltaTable: DeltaTable): String =
+  def runDeltaLakeKeeper(deltaTable: DeltaLakeKeeper): String =
     s"""
       |generate-delta-tables:
       |    runs-on: ubuntu-latest
@@ -51,7 +51,7 @@ trait DeploymentFilePresets {
       |      FILE: '$localPath'
       |""".stripMargin
 
-  def runSparkJob(clusterID: String, sparkApp: SparkApp): String =
+  def runSparkApp(clusterID: String, sparkApp: SparkApp): String =
     s"""
       |run-job:
       |    runs-on: ubuntu-latest
@@ -66,7 +66,7 @@ trait DeploymentFilePresets {
       |      - name: Run Spark Job
       |        run: |
       |        aws emr add-steps --cluster-id "$clusterID" --steps Type=Spark,Name="${sparkApp
-        .jobName}",ActionOnFailure=CONTINUE,Args=[--class,${sparkApp
+        .name}",ActionOnFailure=CONTINUE,Args=[--class,${sparkApp
         .mainClass},s3://nikinconf/jar/spark-aggregator.jar, --inputPath, ${sparkApp
         .inputPath}, --outputPath, ${sparkApp.outputPath}]
       |""".stripMargin
