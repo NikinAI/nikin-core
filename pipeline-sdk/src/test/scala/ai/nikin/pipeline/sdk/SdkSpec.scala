@@ -3,8 +3,8 @@ package ai.nikin.pipeline.sdk
 import ai.nikin.pipeline.sdk.Aggregation.{Avg, Sum}
 import ai.nikin.pipeline.sdk.model.{RecordA, RecordB}
 
-class DslSpec extends TestUtils {
-  test("DSL - aggregation to lake") {
+class SdkSpec extends TestUtils {
+  test("SDK - aggregation to lake") {
     val pipeline: Transformation[RecordA, RecordB] F_>>> Lake[RecordB] =
       aggregation[RecordA, RecordB]("s1", Sum("col1", "col2")) >>> lake[RecordB]("t1")
 
@@ -27,7 +27,7 @@ class DslSpec extends TestUtils {
     )
   }
 
-  test("DSL - lake to aggregation to lake") {
+  test("SDK - lake to aggregation to lake") {
     val pipeline =
       lake[RecordA]("lA") >>> aggregation[RecordA, RecordB]("tAB", Avg("col1", "col2")) >>>
         lake[RecordB]("lB")
