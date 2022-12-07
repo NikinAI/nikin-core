@@ -26,7 +26,7 @@ ThisBuild / credentials +=
     passwd = {
       import scala.util.Try
       import scala.sys.process._
-      sys.env.getOrElse("GITHUB_TOKEN", Try(s"git config github.token".!!).map(_.trim).get)
+      sys.env.getOrElse("READ_PACKAGES_GITHUB_TOKEN", Try(s"git config github.token".!!).map(_.trim).get)
     }
   )
 
