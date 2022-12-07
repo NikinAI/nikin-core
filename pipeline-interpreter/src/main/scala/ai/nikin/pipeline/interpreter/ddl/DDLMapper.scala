@@ -5,7 +5,7 @@ import zio.schema.Schema.{Lazy, Primitive, Transform}
 import zio.schema.{Schema, StandardType}
 
 object DDLMapper {
-  def mapToDDLType[T](input: Schema[T]): DDLType =
+  def mapToDDLType[T <: Product](input: Schema[T]): DDLType =
     input match {
       case r: Schema.Record[T] =>
         val mainContainerFields =

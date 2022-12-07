@@ -19,8 +19,6 @@ object BirdOperator extends Serializable {
 }
 
 object PipelineInterpreter {
-  case class Test()
-
   def process(pipeline: Graph): Map[String, Definition] =
     pipeline.foldEdgeLeft(Map.empty[String, Definition]) {
       case (acc, Edge.Triplet(from @ Lake(n), edge @ Flow(a, b), to @ Aggregation(name, _))) =>
