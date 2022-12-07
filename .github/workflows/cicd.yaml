@@ -17,7 +17,7 @@ jobs:
       - name: test
         run: sbt test
         env:
-          READ_GITHUB_PACKAGES_TOKEN: ${{ secrets.READ_GITHUB_PACKAGES_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: detailed test reporting
         uses: dorny/test-reporter@v1
