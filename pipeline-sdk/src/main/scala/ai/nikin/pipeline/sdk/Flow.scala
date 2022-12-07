@@ -1,24 +1,24 @@
 package ai.nikin.pipeline.sdk
 
-import ai.nikin.typedgraph.core.{CanBeConnected, Edge, EdgeDependency, IVertex}
+import ai.nikin.typedgraph.core.{CanMakeEdge, Edge, EdgeFactory, Vertex, VertexTO}
 
 import scala.annotation.unused
 
 class Flow[
-    FROM <: IVertex[FROM],
-    TO <: IVertex[TO]
+    FROM <: Vertex[FROM],
+    TO <: VertexTO[FROM, TO]
 ](
     override val from: FROM,
     override val to:   TO
 )(implicit
-    @unused ev:        CanBeConnected[FROM, Flow, TO]
+    @unused ev:        CanMakeEdge[FROM, Flow, TO]
 ) extends Edge[FROM, Flow, TO](from, to)
 
-object Flow extends EdgeDependency[Flow] {
+object Flow extends EdgeFactory[Flow] {
   override def apply[
-      FROM <: IVertex[FROM],
-      TO <: IVertex[TO] { type IN = FROM#OUT }
+      FROM <: Vertex[FROM],
+      TO <: VertexTO[FROM, TO]
   ](from: FROM, to: TO)(implicit
-      ev: CanBeConnected[FROM, Flow, TO]
+      ev: CanMakeEdge[FROM, Flow, TO]
   ): FROM F_>>> TO = new Flow(from, to)
 }
