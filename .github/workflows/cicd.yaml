@@ -16,6 +16,8 @@ jobs:
 
       - name: test
         run: sbt test
+        env:
+          READ_GITHUB_PACKAGES_TOKEN: ${{ secrets.READ_GITHUB_PACKAGES_TOKEN }}
 
       - name: detailed test reporting
         uses: dorny/test-reporter@v1
@@ -38,9 +40,3 @@ jobs:
           comment_title: Tests Report
           time_unit: seconds
           job_summary: false
-
-      - name: test coverage
-        # TODO: Use coveralls
-        run: echo "test coverage"
-        env:
-          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
