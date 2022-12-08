@@ -63,10 +63,10 @@ object PipelineInterpreter {
     }
 
   private def processVertex(acc: Map[String, Definition]): AnyVertex => Map[String, Definition] = {
-    case l @ Lake(_) if acc.contains(l.label) => acc
-    case l @ Lake(_)                          =>
+    case l: Lake[_] if acc.contains(l.label) => acc
+    case l: Lake[_]                          =>
       val ddl = DeltaLakeDDLGenerator.generateDDL(l.schema)
       acc + (l.label -> LakeDefinition(ddl))
-    case _                                    => acc
+    case _ => acc
   }
 }
