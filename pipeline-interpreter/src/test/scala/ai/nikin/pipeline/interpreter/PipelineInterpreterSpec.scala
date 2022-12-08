@@ -45,7 +45,7 @@ object PipelineInterpreterSpec extends ZIOSpecDefault {
 
   override def spec: Spec[TestEnvironment with Scope, Any] =
     suite("PipelineInterpreterSpec")(
-      test("should correctly generate lake artifacts") {
+      test("should correctly generate artifacts") {
         val lakeA    = lake[RecordA]("lA")
         val lakeB    = lake[RecordB]("lB")
         val lakeC    = lake[RecordC]("lC")
