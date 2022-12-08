@@ -55,14 +55,21 @@ object PipelineInterpreterSpec extends ZIOSpecDefault {
 
         val artifacts = PipelineInterpreter.process(pipeline.asGraph)
 
-        assertTrue(artifacts.get(lakeA.label).contains(LakeDefinition(ddlLakeA)))
-        assertTrue(artifacts.get(lakeB.label).contains(LakeDefinition(ddlLakeB)))
-        assertTrue(artifacts.get(lakeC.label).contains(LakeDefinition(ddlLakeC)))
+        def assertLake(name: String, ddl: String) =
+          assertTrue(
+            artifacts.find(_.name == name).contains(LakeDefinition(name, ddl))
+          )
+
+        assertLake(lakeA.name, ddlLakeA)
+        assertLake(lakeB.name, ddlLakeB)
+        assertLake(lakeC.name, ddlLakeC)
+
         assertTrue(
           artifacts
-            .get(avg.label)
+            .find(_.name == "tAB")
             .contains(
               AggregationDefinition(
+                "tAB",
                 lakeA.name,
                 lakeB.name,
                 "Avg",
@@ -73,9 +80,10 @@ object PipelineInterpreterSpec extends ZIOSpecDefault {
         )
         assertTrue(
           artifacts
-            .get(min.label)
+            .find(_.name == "tBC")
             .contains(
               AggregationDefinition(
+                "tBC",
                 lakeB.name,
                 lakeC.name,
                 "Min",

@@ -19,22 +19,25 @@ object BirdOperator extends Serializable {
 }
 
 object PipelineInterpreter {
-  def process(pipeline: Graph): Map[String, Definition] =
-    pipeline.foldEdgeLeft(Map.empty[String, Definition]) {
-      case (acc, Edge.Triplet(from @ Lake(n), edge @ Flow(a, b), to @ Aggregation(name, _))) =>
-        // Process Lake to aggregation
-        processVertex(acc)(from) |> (processEdge(_)(Set(from), edge))
+  def process(pipeline: Graph): Seq[Definition] =
+    pipeline
+      .foldEdgeLeft(Map.empty[String, Definition]) {
+        case (acc, Edge.Triplet(from: Lake[_], edge: Flow[_, _], _)) =>
+          // Process Lake to aggregation
+          processVertex(acc)(from) |> (processEdge(_)(Set(from), edge))
 
-      case (acc, Edge.Triplet(a @ Aggregation(name, _), edge, to @ Lake(n))) =>
-        // process Lake
-        processVertex(updateAggregationOutput(acc, a, to))(to)
+        case (acc, Edge.Triplet(a: Aggregation[_, _], _, to: Lake[_])) =>
+          // process Lake
+          processVertex(updateAggregationOutput(acc, a, to))(to)
 
-      case (acc, e) => throw new Exception(s"Unknown $e")
-    }
+        case (_, e) => throw new Exception(s"Unknown $e")
+      }
+      .values
+      .toSeq
 
   private def updateAggregationOutput(
       acc:   Map[String, Definition],
-      value: Aggregation[Any, Any],
+      value: Aggregation[_, _],
       to:    Lake[_]
   ): Map[String, Definition] =
     acc.get(value.label) match {
@@ -51,6 +54,7 @@ object PipelineInterpreter {
       case Flow(_, a @ Aggregation(_, aggFunction)) if !acc.contains(a.label) =>
         val aggregationDefinition =
           AggregationDefinition(
+            a.name,
             ancestors.head.asInstanceOf[Lake[_]].name,
             "__output_placeholder__",
             aggFunction.getClass.getSimpleName,
@@ -66,7 +70,7 @@ object PipelineInterpreter {
     case l: Lake[_] if acc.contains(l.label) => acc
     case l: Lake[_]                          =>
       val ddl = DeltaLakeDDLGenerator.generateDDL(l.schema)
-      acc + (l.label -> LakeDefinition(ddl))
+      acc + (l.label -> LakeDefinition(l.name, ddl))
     case _ => acc
   }
 }
