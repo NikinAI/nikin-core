@@ -5,9 +5,9 @@ sealed trait Definition {
 }
 
 object Definition {
-  case class LakeDefinition(name: String, ddl: String) extends Definition
+  case class DeltaLakeTableDefinition(name: String, ddl: String) extends Definition
 
-  case class AggregationDefinition(
+  case class SparkAggregatorDefinition(
       name:         String,
       inputTable:   String,
       outputTable:  String,

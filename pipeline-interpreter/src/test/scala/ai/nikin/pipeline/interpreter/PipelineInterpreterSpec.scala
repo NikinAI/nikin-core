@@ -1,6 +1,9 @@
 package ai.nikin.pipeline.interpreter
 
-import ai.nikin.pipeline.interpreter.Definition.{AggregationDefinition, LakeDefinition}
+import ai.nikin.pipeline.interpreter.Definition.{
+  DeltaLakeTableDefinition,
+  SparkAggregatorDefinition
+}
 import ai.nikin.pipeline.sdk._
 import ai.nikin.pipeline.sdk.Aggregation.{Avg, Min}
 import ai.nikin.pipeline.sdk.{aggregation, lake}
@@ -20,7 +23,7 @@ object PipelineInterpreterSpec extends ZIOSpecDefault {
 
   val ddlLakeA =
     s"""
-       |CREATE TABLE IF NOT EXISTS RecordA(
+       |CREATE TABLE IF NOT EXISTS lA(
        |    col1 STRING NOT NULL,
        |    col2 INT NOT NULL
        |) USING DELTA
@@ -29,7 +32,7 @@ object PipelineInterpreterSpec extends ZIOSpecDefault {
 
   val ddlLakeB =
     s"""
-       |CREATE TABLE IF NOT EXISTS RecordB(
+       |CREATE TABLE IF NOT EXISTS lB(
        |    col1 STRING NOT NULL
        |) USING DELTA
        |    LOCATION s3a://BUCKET_PLACEHOLDER/RecordB)
@@ -37,7 +40,7 @@ object PipelineInterpreterSpec extends ZIOSpecDefault {
 
   val ddlLakeC =
     s"""
-       |CREATE TABLE IF NOT EXISTS RecordC(
+       |CREATE TABLE IF NOT EXISTS lC(
        |    col1 BIGINT NOT NULL
        |) USING DELTA
        |    LOCATION s3a://BUCKET_PLACEHOLDER/RecordC)
@@ -57,7 +60,7 @@ object PipelineInterpreterSpec extends ZIOSpecDefault {
 
         def assertLake(name: String, ddl: String) =
           assertTrue(
-            artifacts.find(_.name == name).contains(LakeDefinition(name, ddl))
+            artifacts.find(_.name == name).contains(DeltaLakeTableDefinition(name, ddl))
           )
 
         assertLake(lakeA.name, ddlLakeA)
@@ -68,11 +71,11 @@ object PipelineInterpreterSpec extends ZIOSpecDefault {
           artifacts
             .find(_.name == "tAB")
             .contains(
-              AggregationDefinition(
+              SparkAggregatorDefinition(
                 "tAB",
                 lakeA.name,
                 lakeB.name,
-                "Avg",
+                "avg",
                 "col1",
                 "col2"
               )
@@ -82,11 +85,11 @@ object PipelineInterpreterSpec extends ZIOSpecDefault {
           artifacts
             .find(_.name == "tBC")
             .contains(
-              AggregationDefinition(
+              SparkAggregatorDefinition(
                 "tBC",
                 lakeB.name,
                 lakeC.name,
-                "Min",
+                "min",
                 "col1",
                 "col1"
               )

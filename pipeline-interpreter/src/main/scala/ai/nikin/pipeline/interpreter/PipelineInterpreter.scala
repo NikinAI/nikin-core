@@ -1,7 +1,11 @@
 package ai.nikin.pipeline.interpreter
 
-import ai.nikin.pipeline.interpreter.Definition.{AggregationDefinition, LakeDefinition}
+import ai.nikin.pipeline.interpreter.Definition.{
+  DeltaLakeTableDefinition,
+  SparkAggregatorDefinition
+}
 import ai.nikin.pipeline.interpreter.BirdOperator.Pipe
+import ai.nikin.pipeline.sdk.Aggregation.{Avg, Count, Max, Min, Sum}
 import ai.nikin.pipeline.sdk.Flow
 import ai.nikin.pipeline.sdk.{Aggregation, Lake}
 import ai.nikin.typedgraph.core.{AnyEdge, AnyVertex, Edge, Graph}
@@ -41,9 +45,9 @@ object PipelineInterpreter {
       to:    Lake[_]
   ): Map[String, Definition] =
     acc.get(value.label) match {
-      case Some(definition: AggregationDefinition) => acc +
+      case Some(definition: SparkAggregatorDefinition) => acc +
           (value.label -> definition.copy(outputTable = to.name))
-      case _                                       => acc
+      case _                                           => acc
     }
 
   private def processEdge(acc: Map[String, Definition])(
@@ -53,11 +57,11 @@ object PipelineInterpreter {
     edge match {
       case Flow(_, a @ Aggregation(_, aggFunction)) if !acc.contains(a.label) =>
         val aggregationDefinition =
-          AggregationDefinition(
+          SparkAggregatorDefinition(
             a.name,
             ancestors.head.asInstanceOf[Lake[_]].name,
             "__output_placeholder__",
-            aggFunction.getClass.getSimpleName,
+            toSparkFunction(aggFunction),
             aggFunction.inputColumn,
             aggFunction.outputColumn
           )
@@ -69,8 +73,16 @@ object PipelineInterpreter {
   private def processVertex(acc: Map[String, Definition]): AnyVertex => Map[String, Definition] = {
     case l: Lake[_] if acc.contains(l.label) => acc
     case l: Lake[_]                          =>
-      val ddl = DeltaLakeDDLGenerator.generateDDL(l.schema)
-      acc + (l.label -> LakeDefinition(l.name, ddl))
+      val ddl = DeltaLakeDDLGenerator.generateDDL(l.name)(l.schema)
+      acc + (l.label -> DeltaLakeTableDefinition(l.name, ddl))
     case _ => acc
+  }
+
+  private def toSparkFunction: Aggregation.AggregationFunction => String = {
+    case _: Avg   => "avg"
+    case _: Max   => "max"
+    case _: Min   => "min"
+    case _: Sum   => "sum"
+    case _: Count => "count"
   }
 }
