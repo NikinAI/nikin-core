@@ -22,29 +22,23 @@ object PipelineInterpreterSpec extends ZIOSpecDefault {
   case class RecordC(col1: Long)
 
   val ddlLakeA =
-    s"""
-       |CREATE TABLE IF NOT EXISTS lA(
+    s"""CREATE TABLE IF NOT EXISTS lA(
        |    col1 STRING NOT NULL,
        |    col2 INT NOT NULL
        |) USING DELTA
-       |    LOCATION s3a://BUCKET_PLACEHOLDER/RecordA
-       |""".stripMargin
+       |    LOCATION s3a://BUCKET_PLACEHOLDER/lA""".stripMargin
 
   val ddlLakeB =
-    s"""
-       |CREATE TABLE IF NOT EXISTS lB(
+    s"""CREATE TABLE IF NOT EXISTS lB(
        |    col1 STRING NOT NULL
        |) USING DELTA
-       |    LOCATION s3a://BUCKET_PLACEHOLDER/RecordB)
-       |""".stripMargin
+       |    LOCATION s3a://BUCKET_PLACEHOLDER/lB""".stripMargin
 
   val ddlLakeC =
-    s"""
-       |CREATE TABLE IF NOT EXISTS lC(
+    s"""CREATE TABLE IF NOT EXISTS lC(
        |    col1 BIGINT NOT NULL
        |) USING DELTA
-       |    LOCATION s3a://BUCKET_PLACEHOLDER/RecordC)
-       |""".stripMargin
+       |    LOCATION s3a://BUCKET_PLACEHOLDER/lC""".stripMargin
 
   override def spec: Spec[TestEnvironment with Scope, Any] =
     suite("PipelineInterpreterSpec")(
@@ -63,10 +57,9 @@ object PipelineInterpreterSpec extends ZIOSpecDefault {
             artifacts.find(_.name == name).contains(DeltaLakeTableDefinition(name, ddl))
           )
 
-        assertLake(lakeA.name, ddlLakeA)
-        assertLake(lakeB.name, ddlLakeB)
-        assertLake(lakeC.name, ddlLakeC)
-
+        assertLake(lakeA.name, ddlLakeA) &&
+        assertLake(lakeB.name, ddlLakeB) &&
+        assertLake(lakeC.name, ddlLakeC) &&
         assertTrue(
           artifacts
             .find(_.name == "tAB")
@@ -80,7 +73,7 @@ object PipelineInterpreterSpec extends ZIOSpecDefault {
                 "col2"
               )
             )
-        )
+        ) &&
         assertTrue(
           artifacts
             .find(_.name == "tBC")
