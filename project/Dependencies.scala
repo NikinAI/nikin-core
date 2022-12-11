@@ -3,34 +3,24 @@ import sbt._
 object Dependencies {
 
   object Versions {
-    val scala = "2.13.10"
+    val scala        = "2.13.10"
+    val `zio-core`   = "2.0.5"
+    val `zio-schema` = "0.4.1"
   }
 
   object Scala {
     lazy val reflect = "org.scala-lang" % "scala-reflect" % Versions.scala
   }
 
-  object Spark {
-    lazy val sql = "org.apache.spark" %% "spark-sql" % "3.3.1"
-  }
-
-  object DeltaLake {
-    lazy val core = "io.delta" %% "delta-core" % "2.1.1"
-  }
-
   object ZIO {
-    lazy val schema           = "dev.zio" %% "zio-schema"            % "0.3.1"
-    lazy val schemaDerivation = "dev.zio" %% "zio-schema-derivation" % "0.3.1"
-    lazy val test             = "dev.zio" %% "zio-test"              % "2.0.4" % Test
-    lazy val testSbt          = "dev.zio" %% "zio-test-sbt"          % "2.0.4" % Test
-  }
-
-  object Hadoop {
-    lazy val aws = "org.apache.hadoop" % "hadoop-aws" % "3.3.4"
+    lazy val schema           = "dev.zio" %% "zio-schema"            % Versions.`zio-schema`
+    lazy val schemaDerivation = "dev.zio" %% "zio-schema-derivation" % Versions.`zio-schema`
+    lazy val test             = "dev.zio" %% "zio-test"              % Versions.`zio-core` % Test
+    lazy val testSbt          = "dev.zio" %% "zio-test-sbt"          % Versions.`zio-core` % Test
   }
 
   object Logging {
-    lazy val `log4j-over-slf4j` = "org.slf4j"      % "log4j-over-slf4j" % "2.0.4"
+    lazy val `log4j-over-slf4j` = "org.slf4j"      % "log4j-over-slf4j" % "2.0.5"
     lazy val logback            = "ch.qos.logback" % "logback-classic"  % "1.4.5"
   }
 
