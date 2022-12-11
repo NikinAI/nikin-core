@@ -1,3 +1,5 @@
-package ai.nikin.pipeline.sdk.model
+package ai.nikin.pipeline.sdk
+package model
 
+@Schema
 case class RecordA()

@@ -1,10 +1,10 @@
 package ai.nikin.pipeline.sdk
 
-import ai.nikin.typedgraph.core.{CanMakeEdge, Edge, EdgeFactory, Vertex, VertexTO}
+import ai.nikin.typedgraph.core._
 
 import scala.annotation.unused
 
-class Flow[
+case class Flow[
     FROM <: Vertex[FROM],
     TO <: VertexTO[FROM, TO]
 ](

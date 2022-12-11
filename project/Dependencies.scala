@@ -1,7 +1,15 @@
-import sbt.Keys.{libraryDependencies, scalaVersion}
 import sbt._
 
 object Dependencies {
+
+  object Versions {
+    val scala = "2.13.10"
+  }
+
+  object Scala {
+    lazy val reflect = "org.scala-lang" % "scala-reflect" % Versions.scala
+  }
+
   object Spark {
     lazy val sql = "org.apache.spark" %% "spark-sql" % "3.3.1"
   }

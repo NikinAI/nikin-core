@@ -2,23 +2,17 @@ package ai.nikin.pipeline.interpreter
 
 import ai.nikin.pipeline.interpreter.ddl.DDLMapper
 import zio.schema.Schema
-import zio.schema.meta.MetaSchema
 
 object DeltaLakeDDLGenerator {
-  def generateDDL[T <: Product](implicit schema: Schema[T]): String = {
-    val init     = "CREATE TABLE IF NOT EXISTS"
-    val typeName =
-      schema.ast match {
-        case MetaSchema.Product(id, _, _, _) => id.name
-        case _                               => throw new Exception("DDL generation is only supported for case classes.")
-      }
+  def generateDDL[T <: Product](tableName: String)(implicit schema: Schema[T]): String = {
+    val init = "CREATE TABLE IF NOT EXISTS"
 
     val ddl      = DDLMapper.mapToDDLType(schema).toDDL
     val location =
       s"""USING DELTA
-        |    LOCATION s3a://BUCKET_PLACEHOLDER/$typeName""".stripMargin
+        |    LOCATION s3a://BUCKET_PLACEHOLDER/$tableName""".stripMargin
 
-    s"""$init $typeName(
+    s"""$init $tableName(
       |$ddl
       |) $location""".stripMargin
   }

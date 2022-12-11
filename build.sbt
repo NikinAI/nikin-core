@@ -1,6 +1,6 @@
 import Dependencies._
 
-ThisBuild / scalaVersion     := "2.13.10"
+ThisBuild / scalaVersion     := Versions.scala
 ThisBuild / version          := "0.1.0-SNAPSHOT"
 ThisBuild / organization     := "ai.nikin"
 ThisBuild / organizationName := "NikinAI"
@@ -12,7 +12,8 @@ ThisBuild / scalacOptions ++=
     "-Xlint:infer-any", // Warn when a type argument is inferred to be Any.
     "-Xlint:constant", // Evaluation of a constant arithmetic expression results in an error.
     "-Ywarn-unused:imports", "-Xfatal-warnings", "-deprecation", "-Ywarn-dead-code",
-    "-Ywarn-unused:params", "-Ywarn-unused:locals", "-Ywarn-value-discard", "-Ywarn-unused:privates"
+    "-Ywarn-unused:params", "-Ywarn-unused:locals", "-Ywarn-value-discard",
+    "-Ywarn-unused:privates", "-Ymacro-annotations"
   )
 
 ThisBuild / resolvers += "GitHub Package Registry (NikinAI/TypedGraph)" at
@@ -44,7 +45,7 @@ lazy val `pipeline-sdk` =
   project
     .in(file("./pipeline-sdk"))
     .settings(
-      libraryDependencies ++= Seq(TypedGraph.core)
+      libraryDependencies ++= Seq(TypedGraph.core, ZIO.schema, ZIO.schemaDerivation, Scala.reflect)
     )
 
 lazy val `pipeline-interpreter` = (project in file("./pipeline-interpreter"))
