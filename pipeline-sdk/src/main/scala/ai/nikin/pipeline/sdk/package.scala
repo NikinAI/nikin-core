@@ -1,24 +1,48 @@
 package ai.nikin.pipeline
 
 import ai.nikin.pipeline.model.dsl._
-import ai.nikin.typedgraph.core.{CanMakeEdge, Vertex}
-import scala.annotation.{compileTimeOnly, StaticAnnotation}
+import scala.annotation.{compileTimeOnly, unused, StaticAnnotation}
 import scala.language.experimental.macros
+import scala.language.implicitConversions
 import scala.reflect.runtime.universe._
 import scala.reflect.macros.whitebox
 import zio.schema.{Schema => ZSchema}
 
 package object sdk {
-  type F_>>>[
-      FROM <: Vertex[FROM],
-      TO <: Vertex[TO] { type IN = FROM#OUT }
-  ] = Flow[FROM, TO]
 
-  implicit def transformToLake[DATA <: Product, IN]: CanMakeEdge[Transformation[IN, DATA], Flow, Lake[DATA]] =
-    CanMakeEdge[Transformation[IN, DATA], Flow, Lake[DATA]](Flow)
+  import scalax.collection.edges.{DiEdge, DiEdgeImplicits}
+  import scalax.collection.immutable.{Graph, TypedGraphFactory}
 
-  implicit def lakeToTransform[DATA <: Product, OUT]: CanMakeEdge[Lake[DATA], Flow, Transformation[DATA, OUT]] =
-    CanMakeEdge[Lake[DATA], Flow, Transformation[DATA, OUT]](Flow)
+  type PipelineDef = Graph[Vertex[_], DiEdge[Vertex[_]]]
+
+  object PipelineDef extends TypedGraphFactory[Vertex[_], DiEdge[Vertex[_]]]
+
+  implicit def toGraph[V <: Vertex[V]](v: V): PipelineDef = v.graph
+
+  abstract class Vertex[SELF <: Vertex[SELF]](val name: String) {
+    type IN
+    type OUT
+
+    private[sdk] var graph: PipelineDef = PipelineDef.empty
+
+    private[sdk] def addEdge[V <: Vertex[V]](next: V): V = {
+      next.graph = this.graph + this ~> next
+      next
+    }
+
+    def >>>[
+        V <: VertexTO[SELF, V]
+    ](next: V)(implicit @unused ev: CanMakeEdge[SELF, V]): V = addEdge(next)
+  }
+
+  type VertexTO[FROM <: Vertex[FROM], TO <: Vertex[TO] { type IN = FROM#OUT }] =
+    Vertex[TO] { type IN = FROM#OUT }
+
+  implicit def transformToLake[DATA <: Product, IN]: CanMakeEdge[Transformation[IN, DATA], Lake[DATA]] =
+    CanMakeEdge[Transformation[IN, DATA], Lake[DATA]]()
+
+  implicit def lakeToTransform[DATA <: Product, OUT]: CanMakeEdge[Lake[DATA], Transformation[DATA, OUT]] =
+    CanMakeEdge[Lake[DATA], Transformation[DATA, OUT]]()
 
   def aggregation[IN <: Product, OUT <: Product](name: String, f: AggregationFunction)(implicit
       inTypeTag:  WeakTypeTag[IN],
