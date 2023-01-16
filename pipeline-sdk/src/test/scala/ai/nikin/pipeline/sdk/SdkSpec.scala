@@ -2,7 +2,8 @@ package ai.nikin.pipeline.sdk
 
 import ai.nikin.pipeline.model.dsl._
 import AggregationFunction.{Avg, Sum}
-import ai.nikin.pipeline.sdk.schemas.{RecordA, RecordB}
+import ai.nikin.pipeline.sdk.schemas.{RecordA, RecordB, RecordC}
+import shapeless._
 
 class SdkSpec extends TestUtils {
   test("SDK - aggregation to lake") {
@@ -30,8 +31,9 @@ class SdkSpec extends TestUtils {
 
   test("SDK - lake to aggregation to lake") {
     val pipeline =
-      lake[RecordA]("lA") >>> aggregation[RecordA, RecordB]("tAB", Avg("col1", "col2")) >>>
-        lake[RecordB]("lB")
+      (lake[RecordA]("lA") & lake[RecordB]("lB") & lake[RecordC]("lC")) >>>
+        aggregation[RecordC :: RecordB :: RecordA :: HNil, RecordC :: RecordB :: HNil]("tAB", Avg("col1", "col2")) >>>
+        (lake[RecordB]("lB") & lake[RecordC]("lC"))
 
     println(pipeline.graph)
   }
