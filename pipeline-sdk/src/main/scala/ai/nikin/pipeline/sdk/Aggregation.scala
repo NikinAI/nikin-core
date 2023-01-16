@@ -2,7 +2,7 @@ package ai.nikin.pipeline.sdk
 
 import ai.nikin.pipeline.sdk.Aggregation.AggregationFunction
 
-case class Aggregation[_IN, _OUT](name: String, aggFunction: AggregationFunction)
+case class Aggregation[_IN, _OUT](override val name: String, aggFunction: AggregationFunction)
     extends Transformation[_IN, _OUT](s"aggregation-$name")
 
 object Aggregation {

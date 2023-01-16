@@ -1,9 +1,7 @@
 package ai.nikin.pipeline.sdk
 
-import ai.nikin.typedgraph.core.Vertex
-
-case class Lake[DATA <: Product](name: String)(implicit s: zio.schema.Schema[DATA])
-    extends Vertex[Lake[DATA]](s"lake-$name") {
+case class Lake[DATA <: Product](override val name: String)(implicit s: zio.schema.Schema[DATA])
+    extends Vertex[Lake[DATA]](name) {
   final override type IN  = DATA
   final override type OUT = DATA
 

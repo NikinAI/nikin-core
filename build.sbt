@@ -45,7 +45,7 @@ lazy val `pipeline-sdk` =
   project
     .in(file("./pipeline-sdk"))
     .settings(
-      libraryDependencies ++= Seq(TypedGraph.core, ZIO.schema, ZIO.schemaDerivation, Scala.reflect)
+      libraryDependencies ++= Seq("org.scala-graph" %% "graph-core" % "2.0.0", "org.scalameta" %% "munit" % "0.7.29", ZIO.schema, ZIO.schemaDerivation, Scala.reflect)
     )
 
 lazy val `pipeline-interpreter` = (project in file("./pipeline-interpreter"))
