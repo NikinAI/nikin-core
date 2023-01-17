@@ -1,7 +1,12 @@
 package ai.nikin.pipeline.sdk
 
-case class Lake[DATA <: Product](override val name: String)(implicit s: zio.schema.Schema[DATA])
-    extends Vertex[Lake[DATA]](name) {
+import ai.nikin.pipeline.model.BaseLake
+import zio.schema.{Schema => ZSchema}
+
+case class Lake[DATA <: Product](override val name: String, override val tpe: String)(implicit
+    s:                                              ZSchema[DATA]
+) extends Vertex[Lake[DATA]](name)
+    with BaseLake {
   final override type IN  = DATA
   final override type OUT = DATA
 

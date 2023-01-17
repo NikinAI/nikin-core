@@ -1,9 +1,15 @@
 package ai.nikin.pipeline.sdk
 
+import ai.nikin.pipeline.model.BaseAggregation
 import ai.nikin.pipeline.sdk.Aggregation.AggregationFunction
 
-case class Aggregation[_IN, _OUT](override val name: String, aggFunction: AggregationFunction)
-    extends Transformation[_IN, _OUT](s"aggregation-$name")
+case class Aggregation[_IN, _OUT](
+    override val name:      String,
+    aggFunction:            AggregationFunction,
+    override val inputTpe:  String,
+    override val outputTpe: String
+) extends Transformation[_IN, _OUT](s"aggregation-$name")
+    with BaseAggregation
 
 object Aggregation {
   sealed trait AggregationFunction {

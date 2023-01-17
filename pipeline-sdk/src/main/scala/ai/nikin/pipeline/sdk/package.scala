@@ -1,10 +1,12 @@
 package ai.nikin.pipeline
 
 import ai.nikin.pipeline.sdk.Aggregation.AggregationFunction
+import model._
 
 import scala.annotation.{compileTimeOnly, StaticAnnotation}
 import scala.language.experimental.macros
 import scala.language.implicitConversions
+import scala.reflect.runtime.universe._
 import scala.reflect.macros.whitebox
 import zio.schema.{Schema => ZSchema}
 
@@ -19,7 +21,7 @@ package object sdk {
 
   implicit def toGraph[V <: Vertex[V]](v: V): PipelineDef = v.graph
 
-  abstract class Vertex[SELF <: Vertex[SELF]](val name: String) {
+  abstract class Vertex[SELF <: Vertex[SELF]](val name: String) extends BaseVertex {
     type IN
     type OUT
 
@@ -41,17 +43,22 @@ package object sdk {
   type VertexTO[FROM <: Vertex[FROM], TO <: Vertex[TO] { type IN = FROM#OUT }] =
     Vertex[TO] { type IN = FROM#OUT }
 
-  implicit def transformToLake[DATA <: Product, IN]: CanMakeEdge[Transformation[IN, DATA], Lake[DATA]] =
+  implicit def transformToLake[DATA <: Product, IN <: Product]: CanMakeEdge[Transformation[IN, DATA], Lake[DATA]] =
     CanMakeEdge[Transformation[IN, DATA], Lake[DATA]]()
 
-  implicit def lakeToTransform[DATA <: Product, OUT]: CanMakeEdge[Lake[DATA], Transformation[DATA, OUT]] =
+  implicit def lakeToTransform[DATA <: Product, OUT <: Product]: CanMakeEdge[Lake[DATA], Transformation[DATA, OUT]] =
     CanMakeEdge[Lake[DATA], Transformation[DATA, OUT]]()
 
-  def aggregation[IN, OUT](name: String, f: AggregationFunction): Transformation[IN, OUT] =
-    Aggregation(name, f)
+  def aggregation[IN <: Product, OUT <: Product](name: String, f: AggregationFunction)(implicit
+      inTypeTag:                                       WeakTypeTag[IN],
+      outTypeTag:                                      WeakTypeTag[OUT]
+  ): Transformation[IN, OUT] = Aggregation(name, f, extractFQN(inTypeTag), extractFQN(outTypeTag))
 
-  def lake[DATA <: Product](name: String)(implicit schema: ZSchema[DATA]): Lake[DATA] =
-    Lake(name)(schema)
+  def lake[DATA <: Product : ZSchema](name: String)(implicit
+      typeTag: WeakTypeTag[DATA]
+  ): Lake[DATA] = Lake(name, extractFQN(typeTag))
+
+  private[sdk] def extractFQN[T](typeTag: WeakTypeTag[T]): String = typeTag.tpe.typeSymbol.fullName
 
   @compileTimeOnly("enable macro paradise")
   class Schema extends StaticAnnotation {
