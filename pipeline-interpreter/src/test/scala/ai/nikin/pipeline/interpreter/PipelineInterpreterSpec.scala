@@ -6,7 +6,6 @@ import ai.nikin.pipeline.interpreter.Definition.{
 }
 import ai.nikin.pipeline.sdk._
 import ai.nikin.pipeline.sdk.Aggregation.{Avg, Min}
-import ai.nikin.pipeline.sdk.{aggregation, lake}
 import zio.Scope
 import zio.test.{assertTrue, Spec, TestEnvironment, ZIOSpecDefault}
 
@@ -50,7 +49,7 @@ object PipelineInterpreterSpec extends ZIOSpecDefault {
         val min      = aggregation[RecordB, RecordC]("tBC", Min("col1", "col1"))
         val pipeline = lakeA >>> avg >>> lakeB >>> min >>> lakeC
 
-        val artifacts = PipelineInterpreter.process(pipeline.asGraph)
+        val artifacts = PipelineInterpreter.process(pipeline)
 
         def assertLake(name: String, ddl: String) =
           assertTrue(

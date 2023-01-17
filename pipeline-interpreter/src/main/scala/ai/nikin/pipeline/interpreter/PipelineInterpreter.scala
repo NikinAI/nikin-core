@@ -4,77 +4,62 @@ import ai.nikin.pipeline.interpreter.Definition.{
   DeltaLakeTableDefinition,
   SparkAggregatorDefinition
 }
-import ai.nikin.pipeline.interpreter.BirdOperator.Pipe
 import ai.nikin.pipeline.sdk.Aggregation.{Avg, Count, Max, Min, Sum}
-import ai.nikin.pipeline.sdk.Flow
-import ai.nikin.pipeline.sdk.{Aggregation, Lake}
-import ai.nikin.typedgraph.core.{AnyEdge, AnyVertex, Edge, Graph}
-
-object BirdOperator extends Serializable {
-
-  implicit class Pipe[A](a: A) {
-    def |>[Z](f: A => Z): Z = f(a)
-  }
-
-  implicit class Pipe2[A, B](a: (A, B)) {
-    def |>[Z](f: (A, B) => Z): Z = f.tupled(a)
-  }
-
-}
+import ai.nikin.pipeline.sdk._
+import scalax.collection.edges.DiEdge
 
 object PipelineInterpreter {
-  def process(pipeline: Graph): Seq[Definition] =
+  def process(pipeline: PipelineDef): Seq[Definition] =
     pipeline
-      .foldEdgeLeft(Map.empty[String, Definition]) {
-        case (acc, Edge.Triplet(from: Lake[_], edge: Flow[_, _], _)) =>
-          // Process Lake to aggregation
-          processVertex(acc)(from) |> (processEdge(_)(Set(from), edge))
-
-        case (acc, Edge.Triplet(a: Aggregation[_, _], _, to: Lake[_])) =>
-          // process Lake
-          processVertex(updateAggregationOutput(acc, a, to))(to)
-
-        case (_, e) => throw new Exception(s"Unknown $e")
-      }
+      .foldLeft(Map.empty[String, Definition])(
+        { case (acc, vertex) => processVertex(acc)(vertex) },
+        { case (acc, edge) => processEdge(acc, edge) }
+      )
       .values
       .toSeq
 
-  private def updateAggregationOutput(
-      acc:   Map[String, Definition],
-      value: Aggregation[_, _],
-      to:    Lake[_]
+  // TODO refactor duplicated code
+  private def processEdge(
+      acc:  Map[String, Definition],
+      edge: DiEdge[Vertex[_]]
   ): Map[String, Definition] =
-    acc.get(value.label) match {
-      case Some(definition: SparkAggregatorDefinition) => acc +
-          (value.label -> definition.copy(outputTable = to.name))
+    edge match {
+      case DiEdge(lake: Lake[_], a: Aggregation[_, _]) => acc.get(a.name) match {
+          case Some(definition: SparkAggregatorDefinition) => acc +
+              (a.name -> definition.copy(inputTable = lake.name))
+          case Some(definition)                            => throw new RuntimeException(
+              s"Definition $definition for ${a.name} doesn't match requested type"
+            )
+          case _                                           => throw new RuntimeException(s"Definition for ${a.name} couldn't be found")
+        }
+      case DiEdge(a: Aggregation[_, _], lake: Lake[_]) => acc.get(a.name) match {
+          case Some(definition: SparkAggregatorDefinition) => acc +
+              (a.name -> definition.copy(outputTable = lake.name))
+          case Some(definition)                            => throw new RuntimeException(
+              s"Definition $definition for ${a.name} doesn't match requested type"
+            )
+          case _                                           => throw new RuntimeException(s"Definition for ${a.name} couldn't be found")
+        }
       case _                                           => acc
     }
 
-  private def processEdge(acc: Map[String, Definition])(
-      ancestors:               Set[AnyVertex],
-      edge:                    AnyEdge
-  ): Map[String, Definition] =
-    edge match {
-      case Flow(_, a @ Aggregation(_, aggFunction)) if !acc.contains(a.label) =>
-        val aggregationDefinition =
-          SparkAggregatorDefinition(
-            a.name,
-            ancestors.head.asInstanceOf[Lake[_]].name,
-            "__output_placeholder__",
-            toSparkFunction(aggFunction),
-            aggFunction.inputColumn,
-            aggFunction.outputColumn
-          )
-
-        acc + (a.label -> aggregationDefinition)
-      case _                                                                  => acc
-    }
-
-  private def processVertex(acc: Map[String, Definition]): AnyVertex => Map[String, Definition] = {
-    case l: Lake[_] if acc.contains(l.label) => acc
-    case l: Lake[_]                          =>
+  private def processVertex(acc: Map[String, Definition]): Vertex[_] => Map[String, Definition] = {
+    case l: Lake[_] if acc.contains(l.name) => acc
+    case l: Lake[_]                         =>
       val ddl = DeltaLakeDDLGenerator.generateDDL(l.name)(l.schema)
-      acc + (l.label -> DeltaLakeTableDefinition(l.name, ddl))
+      acc + (l.name -> DeltaLakeTableDefinition(l.name, ddl))
+    case a: Aggregation[_, _]               =>
+      val aggregationDefinition =
+        SparkAggregatorDefinition(
+          a.name,
+          "__input_placeholder__",
+          "__output_placeholder__",
+          toSparkFunction(a.aggFunction),
+          a.aggFunction.inputColumn,
+          a.aggFunction.outputColumn
+        )
+
+      acc + (a.name -> aggregationDefinition)
     case _ => acc
   }
 

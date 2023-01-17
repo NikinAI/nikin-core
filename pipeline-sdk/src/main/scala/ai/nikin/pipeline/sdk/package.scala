@@ -4,6 +4,7 @@ import ai.nikin.pipeline.sdk.Aggregation.AggregationFunction
 
 import scala.annotation.{compileTimeOnly, StaticAnnotation}
 import scala.language.experimental.macros
+import scala.language.implicitConversions
 import scala.reflect.macros.whitebox
 import zio.schema.{Schema => ZSchema}
 
@@ -16,7 +17,9 @@ package object sdk {
 
   object PipelineDef extends TypedGraphFactory[Vertex[_], DiEdge[Vertex[_]]]
 
-  abstract class Vertex[SELF <: Vertex[SELF]](val name: String) extends Product {
+  implicit def toGraph[V <: Vertex[V]](v: V): PipelineDef = v.graph
+
+  abstract class Vertex[SELF <: Vertex[SELF]](val name: String) {
     type IN
     type OUT
 
