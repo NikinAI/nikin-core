@@ -4,8 +4,8 @@ import ai.nikin.pipeline.interpreter.Definition.{
   DeltaLakeTableDefinition,
   SparkAggregatorDefinition
 }
-import ai.nikin.pipeline.sdk.Aggregation.{Avg, Count, Max, Min, Sum}
-import ai.nikin.pipeline.sdk._
+import ai.nikin.pipeline.model.DSL.AggregationFunction.{Avg, Count, Max, Min, Sum}
+import ai.nikin.pipeline.model.DSL._
 import scalax.collection.edges.DiEdge
 
 object PipelineInterpreter {
@@ -63,7 +63,7 @@ object PipelineInterpreter {
     case _ => acc
   }
 
-  private def toSparkFunction: Aggregation.AggregationFunction => String = {
+  private def toSparkFunction: AggregationFunction => String = {
     case _: Avg   => "avg"
     case _: Max   => "max"
     case _: Min   => "min"

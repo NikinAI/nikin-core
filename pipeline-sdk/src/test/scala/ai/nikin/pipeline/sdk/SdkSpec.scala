@@ -1,14 +1,16 @@
 package ai.nikin.pipeline.sdk
 
-import ai.nikin.pipeline.sdk.Aggregation.{Avg, Sum}
+import ai.nikin.pipeline.model.DSL.AggregationFunction.{Avg, Sum}
 import ai.nikin.pipeline.sdk.model.{RecordA, RecordB}
+import ai.nikin.pipeline.model.DSL._
+
 
 class SdkSpec extends TestUtils {
   test("SDK - aggregation to lake") {
     val pipeline =
       aggregation[RecordA, RecordB]("s1", Sum("col1", "col2")) >>> lake[RecordB]("t1")
 
-    println(pipeline.graph)
+    println(pipeline.toGraph)
 
     testContained(
       compileErrors(
@@ -32,6 +34,10 @@ class SdkSpec extends TestUtils {
       lake[RecordA]("lA") >>> aggregation[RecordA, RecordB]("tAB", Avg("col1", "col2")) >>>
         lake[RecordB]("lB")
 
-    println(pipeline.graph)
+    println(pipeline.toGraph)
+  }
+
+  test("xx") {
+    println(UntypedLake("lake1", "com.my.type.Name"))
   }
 }

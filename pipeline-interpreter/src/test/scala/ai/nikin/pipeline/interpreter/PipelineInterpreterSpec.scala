@@ -5,7 +5,7 @@ import ai.nikin.pipeline.interpreter.Definition.{
   SparkAggregatorDefinition
 }
 import ai.nikin.pipeline.sdk._
-import ai.nikin.pipeline.sdk.Aggregation.{Avg, Min}
+import ai.nikin.pipeline.model.DSL.AggregationFunction.{Avg, Min}
 import zio.Scope
 import zio.test.{assertTrue, Spec, TestEnvironment, ZIOSpecDefault}
 
@@ -49,7 +49,7 @@ object PipelineInterpreterSpec extends ZIOSpecDefault {
         val min      = aggregation[RecordB, RecordC]("tBC", Min("col1", "col1"))
         val pipeline = lakeA >>> avg >>> lakeB >>> min >>> lakeC
 
-        val artifacts = PipelineInterpreter.process(pipeline)
+        val artifacts = PipelineInterpreter.process(pipeline.toGraph)
 
         def assertLake(name: String, ddl: String) =
           assertTrue(
