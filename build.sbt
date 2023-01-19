@@ -49,10 +49,6 @@ lazy val `pipeline-dsl-macros` =
     .settings(
       libraryDependencies ++=
         Seq(
-          "org.scala-graph" %% "graph-core" % "2.0.0",
-          "org.scalameta"   %% "munit"      % "0.7.29",
-          ZIO.schema,
-          ZIO.schemaDerivation,
           Scala.reflect
         )
     )
@@ -64,10 +60,9 @@ lazy val `pipeline-sdk` =
       libraryDependencies ++=
         Seq(
           "org.scala-graph" %% "graph-core" % "2.0.0",
-          "org.scalameta"   %% "munit"      % "0.7.29",
+          Scalameta.munit,
           ZIO.schema,
-          ZIO.schemaDerivation,
-          Scala.reflect
+          ZIO.schemaDerivation
         )
     )
     .dependsOn(`pipeline-dsl-macros`)
