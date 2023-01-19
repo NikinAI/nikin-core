@@ -1,8 +1,8 @@
 package ai.nikin.pipeline.sdk
 
-import ai.nikin.pipeline.model.DSL.AggregationFunction.{Avg, Sum}
 import ai.nikin.pipeline.sdk.model.{RecordA, RecordB}
 import ai.nikin.pipeline.model.DSL._
+import AggregationFunction._
 
 
 class SdkSpec extends TestUtils {

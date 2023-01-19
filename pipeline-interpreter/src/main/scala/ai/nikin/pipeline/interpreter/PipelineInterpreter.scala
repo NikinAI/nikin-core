@@ -1,11 +1,13 @@
-package ai.nikin.pipeline.interpreter
+package ai.nikin.pipeline
+package interpreter
 
 import ai.nikin.pipeline.interpreter.Definition.{
   DeltaLakeTableDefinition,
   SparkAggregatorDefinition
 }
-import ai.nikin.pipeline.model.DSL.AggregationFunction.{Avg, Count, Max, Min, Sum}
-import ai.nikin.pipeline.model.DSL._
+import model.DSL._
+import AggregationFunction.{Avg, Count, Max, Min, Sum}
+
 import scalax.collection.edges.DiEdge
 
 object PipelineInterpreter {

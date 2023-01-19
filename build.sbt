@@ -38,6 +38,7 @@ lazy val root = (project in file("."))
   .aggregate(
     `pipeline-dsl-macros`,
     `pipeline-sdk`,
+    `pipeline-runtime`,
     `pipeline-interpreter`,
     `pipeline-deployment-gha`
   )
@@ -70,6 +71,8 @@ lazy val `pipeline-sdk` =
         )
     )
     .dependsOn(`pipeline-dsl-macros`)
+
+lazy val `pipeline-runtime` = (project in file("./pipeline-runtime")).dependsOn(`pipeline-sdk`)
 
 lazy val `pipeline-interpreter` = (project in file("./pipeline-interpreter"))
   .settings(

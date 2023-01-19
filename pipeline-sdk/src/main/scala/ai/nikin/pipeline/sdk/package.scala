@@ -1,15 +1,13 @@
 package ai.nikin.pipeline
 
-import ai.nikin.pipeline.model.DSL._
-
 import scala.annotation.{compileTimeOnly, StaticAnnotation}
 import scala.language.experimental.macros
 import scala.reflect.runtime.universe._
 import scala.reflect.macros.whitebox
 import zio.schema.{Schema => ZSchema}
+import model.DSL._
 
 package object sdk {
-
   implicit def transformToLake[DATA <: Product, IN <: Product]: CanMakeEdge[Transformation[IN, DATA], Lake[DATA]] =
     CanMakeEdge[Transformation[IN, DATA], Lake[DATA]]()
 
