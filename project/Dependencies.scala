@@ -4,8 +4,8 @@ object Dependencies {
 
   object Versions {
     val scala        = "2.13.10"
-    val `zio-core`   = "2.0.5"
-    val `zio-schema` = "0.4.1"
+    val `zio-core`   = "2.0.6"
+    val `zio-schema` = "0.4.2"
   }
 
   object Scala {
