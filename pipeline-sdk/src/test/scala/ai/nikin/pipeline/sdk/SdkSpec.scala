@@ -36,4 +36,12 @@ class SdkSpec extends TestUtils {
     println(pipeline.asGraph)
     println(pipeline)
   }
+
+  test("SDK - Schema FQN is captured") {
+    assert(lake[RecordA]("lA").tpe == classOf[RecordA].getCanonicalName)
+
+    val agg = aggregation[RecordA, RecordB]("tAB", Avg("col1", "col2"))
+    assert(agg.inputTpe == classOf[RecordA].getCanonicalName)
+    assert(agg.outputTpe == classOf[RecordB].getCanonicalName)
+  }
 }
