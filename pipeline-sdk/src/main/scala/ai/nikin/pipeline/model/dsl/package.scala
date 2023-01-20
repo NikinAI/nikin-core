@@ -1,4 +1,5 @@
-package ai.nikin.pipeline.model
+package ai.nikin.pipeline
+package model
 
 import ai.nikin.typedgraph.core.Vertex
 import io.scalaland.chimney.dsl._
@@ -32,29 +33,11 @@ package object dsl {
   @DslModel
   case class Aggregation[_IN, _OUT](
       name:        String,
-      aggFunction: AggregationFunction,
+      aggFunction: sdk.AggregationFunction,
       inputTpe:    String,
       outputTpe:   String
   ) extends Transformation[_IN, _OUT](s"aggregation-$name") {
     def toUntyped: UntypedAggregation = this.transformInto[UntypedAggregation]
-  }
-
-  sealed trait AggregationFunction {
-    def inputColumn: String
-
-    def outputColumn: String
-  }
-
-  object AggregationFunction {
-    case class Avg(inputColumn: String, outputColumn: String) extends AggregationFunction
-
-    case class Max(inputColumn: String, outputColumn: String) extends AggregationFunction
-
-    case class Min(inputColumn: String, outputColumn: String) extends AggregationFunction
-
-    case class Sum(inputColumn: String, outputColumn: String) extends AggregationFunction
-
-    case class Count(inputColumn: String, outputColumn: String) extends AggregationFunction
   }
 
 }

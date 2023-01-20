@@ -1,7 +1,7 @@
 package ai.nikin.pipeline.sdk
 
 import ai.nikin.pipeline.model.dsl._
-import ai.nikin.pipeline.model.dsl.AggregationFunction.{Avg, Sum}
+import AggregationFunction.{Avg, Sum}
 import ai.nikin.pipeline.sdk.schemas.{RecordA, RecordB}
 
 class SdkSpec extends TestUtils {

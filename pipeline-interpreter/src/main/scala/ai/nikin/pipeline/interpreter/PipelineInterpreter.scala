@@ -6,8 +6,8 @@ import ai.nikin.pipeline.interpreter.Definition.{
 }
 import ai.nikin.pipeline.interpreter.BirdOperator.Pipe
 import ai.nikin.pipeline.model.dsl._
+import ai.nikin.pipeline.sdk._
 import AggregationFunction.{Avg, Count, Max, Min, Sum}
-import ai.nikin.pipeline.sdk.Flow
 import ai.nikin.typedgraph.core.{AnyEdge, AnyVertex, Edge, Graph}
 
 object BirdOperator extends Serializable {
