@@ -38,10 +38,20 @@ class SdkSpec extends TestUtils {
   }
 
   test("SDK - Schema FQN is captured") {
-    assert(lake[RecordA]("lA").tpe == classOf[RecordA].getCanonicalName)
+    assertEquals(lake[RecordA]("lA").tpe, classOf[RecordA].getCanonicalName)
 
     val agg = aggregation[RecordA, RecordB]("tAB", Avg("col1", "col2"))
-    assert(agg.inputTpe == classOf[RecordA].getCanonicalName)
-    assert(agg.outputTpe == classOf[RecordB].getCanonicalName)
+    assertEquals(agg.inputTpe, classOf[RecordA].getCanonicalName)
+    assertEquals(agg.outputTpe, classOf[RecordB].getCanonicalName)
+  }
+
+  test("Untyped DSL Model") {
+    import io.scalaland.chimney.dsl._
+
+    val table = lake[RecordA]("lA")
+    assertEquals(table.transformInto[UntypedLake], UntypedLake(table.name, table.tpe))
+
+    val agg = aggregation[RecordA, RecordB]("tAB", Avg("col1", "col2")).asInstanceOf[Aggregation[RecordA, RecordB]]
+    assertEquals(agg.transformInto[UntypedAggregation], UntypedAggregation(agg.name, agg.aggFunction, agg.inputTpe, agg.outputTpe))
   }
 }

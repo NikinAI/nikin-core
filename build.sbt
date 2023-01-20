@@ -56,7 +56,7 @@ lazy val `pipeline-sdk` =
   project
     .in(file("./pipeline-sdk"))
     .settings(
-      libraryDependencies ++= Seq(TypedGraph.core, ZIO.schema, ZIO.schemaDerivation)
+      libraryDependencies ++= Seq(TypedGraph.core, ZIO.schema, ZIO.schemaDerivation, "io.scalaland" %% "chimney" % "0.6.2")
     )
     .dependsOn(`pipeline-dsl-macros`)
 
