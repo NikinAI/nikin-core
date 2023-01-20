@@ -5,9 +5,9 @@ import ai.nikin.pipeline.interpreter.Definition.{
   SparkAggregatorDefinition
 }
 import ai.nikin.pipeline.interpreter.BirdOperator.Pipe
-import ai.nikin.pipeline.sdk.Aggregation.{Avg, Count, Max, Min, Sum}
+import ai.nikin.pipeline.model.dsl._
+import AggregationFunction.{Avg, Count, Max, Min, Sum}
 import ai.nikin.pipeline.sdk.Flow
-import ai.nikin.pipeline.sdk.{Aggregation, Lake}
 import ai.nikin.typedgraph.core.{AnyEdge, AnyVertex, Edge, Graph}
 
 object BirdOperator extends Serializable {
@@ -55,7 +55,7 @@ object PipelineInterpreter {
       edge:                    AnyEdge
   ): Map[String, Definition] =
     edge match {
-      case Flow(_, a @ Aggregation(_, aggFunction)) if !acc.contains(a.label) =>
+      case Flow(_, a @ Aggregation(_, aggFunction, _, _)) if !acc.contains(a.label) =>
         val aggregationDefinition =
           SparkAggregatorDefinition(
             a.name,
@@ -78,7 +78,7 @@ object PipelineInterpreter {
     case _ => acc
   }
 
-  private def toSparkFunction: Aggregation.AggregationFunction => String = {
+  private def toSparkFunction: AggregationFunction => String = {
     case _: Avg   => "avg"
     case _: Max   => "max"
     case _: Min   => "min"
