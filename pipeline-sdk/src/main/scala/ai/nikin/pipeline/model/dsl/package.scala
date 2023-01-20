@@ -10,9 +10,9 @@ package object dsl {
 
   @DslModel
   case class Lake[DATA <: Product](name: String, tpe: String)(implicit
-                                                                            s: zio.schema.Schema[DATA]
+      s:                                 zio.schema.Schema[DATA]
   ) extends Vertex[Lake[DATA]](s"lake-$name") {
-    final override type IN = DATA
+    final override type IN  = DATA
     final override type OUT = DATA
 
     lazy final val schema: zio.schema.Schema[DATA] = s
@@ -25,21 +25,21 @@ package object dsl {
 //  }
 
   sealed abstract class Transformation[_IN, _OUT](n: String)
-    extends Vertex[Transformation[_IN, _OUT]](n) {
-    final override type IN = _IN
+      extends Vertex[Transformation[_IN, _OUT]](n) {
+    final override type IN  = _IN
     final override type OUT = _OUT
 
-    def inputTpe: String
+    def inputTpe:  String
     def outputTpe: String
   }
 
   @DslModel
   case class Aggregation[_IN, _OUT](
-                                     name: String,
-                                     aggFunction: AggregationFunction,
-                                     inputTpe: String,
-                                     outputTpe: String
-                                   ) extends Transformation[_IN, _OUT](s"aggregation-$name") {
+      name:        String,
+      aggFunction: AggregationFunction,
+      inputTpe:    String,
+      outputTpe:   String
+  ) extends Transformation[_IN, _OUT](s"aggregation-$name") {
     def toUntyped: UntypedAggregation = this.transformInto[UntypedAggregation]
   }
 

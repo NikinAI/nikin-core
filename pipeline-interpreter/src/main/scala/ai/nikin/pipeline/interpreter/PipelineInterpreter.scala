@@ -67,7 +67,7 @@ object PipelineInterpreter {
           )
 
         acc + (a.label -> aggregationDefinition)
-      case _                                                                  => acc
+      case _                                                                        => acc
     }
 
   private def processVertex(acc: Map[String, Definition]): AnyVertex => Map[String, Definition] = {

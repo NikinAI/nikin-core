@@ -20,7 +20,6 @@ package object sdk {
   implicit def lakeToTransform[DATA <: Product, OUT]: CanMakeEdge[Lake[DATA], Flow, Transformation[DATA, OUT]] =
     CanMakeEdge[Lake[DATA], Flow, Transformation[DATA, OUT]](Flow)
 
-
   def aggregation[IN <: Product, OUT <: Product](name: String, f: AggregationFunction)(implicit
       inTypeTag:                                       WeakTypeTag[IN],
       outTypeTag:                                      WeakTypeTag[OUT]

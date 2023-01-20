@@ -28,4 +28,8 @@ object Dependencies {
     lazy val core = "ai.nikin" %% "typed-graph" % "0.1.2"
   }
 
+  object Scalaland {
+    lazy val chimney = "io.scalaland" %% "chimney" % "0.6.2"
+  }
+
 }
