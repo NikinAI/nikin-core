@@ -45,13 +45,11 @@ class SdkSpec extends TestUtils {
     assertEquals(agg.outputTpe, classOf[RecordB].getCanonicalName)
   }
 
-  test("Untyped DSL Model") {
-    import io.scalaland.chimney.dsl._
-
+  test("Untyped DSL Model - transformation from Typed to Untyped is correct") {
     val table = lake[RecordA]("lA")
-    assertEquals(table.transformInto[UntypedLake], UntypedLake(table.name, table.tpe))
+    assertEquals(table.toUntyped, UntypedLake(table.name, table.tpe))
 
     val agg = aggregation[RecordA, RecordB]("tAB", Avg("col1", "col2")).asInstanceOf[Aggregation[RecordA, RecordB]]
-    assertEquals(agg.transformInto[UntypedAggregation], UntypedAggregation(agg.name, agg.aggFunction, agg.inputTpe, agg.outputTpe))
+    assertEquals(agg.toUntyped, UntypedAggregation(agg.name, agg.aggFunction, agg.inputTpe, agg.outputTpe))
   }
 }
