@@ -36,17 +36,30 @@ lazy val root = (project in file("."))
     name := "nikin-core"
   )
   .aggregate(
+    `pipeline-dsl-macros`,
     `pipeline-sdk`,
     `pipeline-interpreter`,
     `pipeline-deployment-gha`
   )
 
+lazy val `pipeline-dsl-macros` =
+  project
+    .in(file("./pipeline-dsl-macros"))
+    .settings(
+      libraryDependencies ++=
+        Seq(
+          Scala.reflect
+        )
+    )
+
 lazy val `pipeline-sdk` =
   project
     .in(file("./pipeline-sdk"))
     .settings(
-      libraryDependencies ++= Seq(TypedGraph.core, ZIO.schema, ZIO.schemaDerivation, Scala.reflect)
+      libraryDependencies ++=
+        Seq(TypedGraph.core, ZIO.schema, ZIO.schemaDerivation, Scalaland.chimney)
     )
+    .dependsOn(`pipeline-dsl-macros`)
 
 lazy val `pipeline-interpreter` = (project in file("./pipeline-interpreter"))
   .settings(

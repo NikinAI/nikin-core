@@ -1,18 +1,19 @@
 package ai.nikin.pipeline.sdk
 
-import ai.nikin.pipeline.sdk.Aggregation.AggregationFunction
+sealed trait AggregationFunction {
+  def inputColumn: String
 
-case class Aggregation[_IN, _OUT](name: String, aggFunction: AggregationFunction)
-    extends Transformation[_IN, _OUT](s"aggregation-$name")
+  def outputColumn: String
+}
 
-object Aggregation {
-  sealed trait AggregationFunction {
-    def inputColumn:  String
-    def outputColumn: String
-  }
+object AggregationFunction {
   case class Avg(inputColumn: String, outputColumn: String) extends AggregationFunction
+
   case class Max(inputColumn: String, outputColumn: String) extends AggregationFunction
+
   case class Min(inputColumn: String, outputColumn: String) extends AggregationFunction
+
   case class Sum(inputColumn: String, outputColumn: String) extends AggregationFunction
+
   case class Count(inputColumn: String, outputColumn: String) extends AggregationFunction
 }

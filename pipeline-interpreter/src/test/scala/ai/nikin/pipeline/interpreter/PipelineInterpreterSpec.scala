@@ -5,7 +5,7 @@ import ai.nikin.pipeline.interpreter.Definition.{
   SparkAggregatorDefinition
 }
 import ai.nikin.pipeline.sdk._
-import ai.nikin.pipeline.sdk.Aggregation.{Avg, Min}
+import AggregationFunction._
 import ai.nikin.pipeline.sdk.{aggregation, lake}
 import zio.Scope
 import zio.test.{assertTrue, Spec, TestEnvironment, ZIOSpecDefault}

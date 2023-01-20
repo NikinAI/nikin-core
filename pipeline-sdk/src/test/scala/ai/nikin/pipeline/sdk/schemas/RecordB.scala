@@ -1,5 +1,5 @@
 package ai.nikin.pipeline.sdk
-package model
+package schemas
 
 @Schema
-case class RecordC()
+case class RecordB()

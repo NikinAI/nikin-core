@@ -1,7 +1,8 @@
 package ai.nikin.pipeline.sdk
 
-import ai.nikin.pipeline.sdk.Aggregation.{Avg, Sum}
-import ai.nikin.pipeline.sdk.model.{RecordA, RecordB}
+import ai.nikin.pipeline.model.dsl._
+import AggregationFunction.{Avg, Sum}
+import ai.nikin.pipeline.sdk.schemas.{RecordA, RecordB}
 
 class SdkSpec extends TestUtils {
   test("SDK - aggregation to lake") {
@@ -34,5 +35,21 @@ class SdkSpec extends TestUtils {
 
     println(pipeline.asGraph)
     println(pipeline)
+  }
+
+  test("SDK - Schema FQN is captured") {
+    assertEquals(lake[RecordA]("lA").tpe, classOf[RecordA].getCanonicalName)
+
+    val agg = aggregation[RecordA, RecordB]("tAB", Avg("col1", "col2"))
+    assertEquals(agg.inputTpe, classOf[RecordA].getCanonicalName)
+    assertEquals(agg.outputTpe, classOf[RecordB].getCanonicalName)
+  }
+
+  test("Untyped DSL Model - transformation from Typed to Untyped is correct") {
+    val table = lake[RecordA]("lA")
+    assertEquals(table.toUntyped, UntypedLake(table.name, table.tpe))
+
+    val agg = aggregation[RecordA, RecordB]("tAB", Avg("col1", "col2")).asInstanceOf[Aggregation[RecordA, RecordB]]
+    assertEquals(agg.toUntyped, UntypedAggregation(agg.name, agg.aggFunction, agg.inputTpe, agg.outputTpe))
   }
 }
