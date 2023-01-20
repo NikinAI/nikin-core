@@ -20,10 +20,6 @@ package object dsl {
     def toUntyped: UntypedLake = this.transformInto[UntypedLake]
   }
 
-//  implicit class LakeExt(lake: Lake[_]) {
-//    def toUntyped: UntypedLake = ???
-//  }
-
   sealed abstract class Transformation[_IN, _OUT](n: String)
       extends Vertex[Transformation[_IN, _OUT]](n) {
     final override type IN  = _IN
