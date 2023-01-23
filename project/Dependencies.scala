@@ -3,16 +3,16 @@ import sbt._
 object Dependencies {
 
   object Versions {
-    val scala        = "2.13.10"
     val `zio-core`   = "2.0.6"
     val `zio-schema` = "0.4.2"
   }
 
   object Scala {
-    lazy val reflect = "org.scala-lang" % "scala-reflect" % Versions.scala
+    def reflect(scalaVersion: String): ModuleID = "org.scala-lang" % "scala-reflect" % scalaVersion
   }
 
   object ZIO {
+    lazy val core             = "dev.zio" %% "zio"                   % Versions.`zio-core`
     lazy val schema           = "dev.zio" %% "zio-schema"            % Versions.`zio-schema`
     lazy val schemaDerivation = "dev.zio" %% "zio-schema-derivation" % Versions.`zio-schema`
     lazy val test             = "dev.zio" %% "zio-test"              % Versions.`zio-core` % Test

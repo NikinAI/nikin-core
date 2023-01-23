@@ -1,6 +1,6 @@
 import Dependencies._
 
-ThisBuild / scalaVersion     := Versions.scala
+ThisBuild / scalaVersion     := "2.13.10"
 ThisBuild / version          := "0.1.0-SNAPSHOT"
 ThisBuild / organization     := "ai.nikin"
 ThisBuild / organizationName := "NikinAI"
@@ -48,7 +48,7 @@ lazy val `pipeline-dsl-macros` =
     .settings(
       libraryDependencies ++=
         Seq(
-          Scala.reflect
+          Scala.reflect(scalaVersion.value)
         )
     )
 
@@ -57,13 +57,13 @@ lazy val `pipeline-sdk` =
     .in(file("./pipeline-sdk"))
     .settings(
       libraryDependencies ++=
-        Seq(TypedGraph.core, ZIO.schema, ZIO.schemaDerivation, Scalaland.chimney)
+        Seq(TypedGraph.core, ZIO.core, ZIO.schema, ZIO.schemaDerivation, Scalaland.chimney)
     )
     .dependsOn(`pipeline-dsl-macros`)
 
 lazy val `pipeline-interpreter` = (project in file("./pipeline-interpreter"))
   .settings(
-    libraryDependencies ++= List(ZIO.schema, ZIO.schemaDerivation, ZIO.test, ZIO.testSbt)
+    libraryDependencies ++= List(ZIO.test, ZIO.testSbt)
   )
   .dependsOn(`pipeline-sdk`)
 
