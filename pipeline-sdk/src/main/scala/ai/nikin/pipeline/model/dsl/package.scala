@@ -11,7 +11,7 @@ package object dsl {
 
   @DslModel
   case class Lake[DATA <: Product](name: String, tpe: String)(implicit
-      s:                                 zio.schema.Schema[DATA]
+      s: zio.schema.Schema[DATA]
   ) extends Vertex[Lake[DATA]](s"lake-$name") {
     final override type IN  = DATA
     final override type OUT = DATA

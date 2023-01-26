@@ -51,8 +51,8 @@ object PipelineInterpreter {
     }
 
   private def processEdge(acc: Map[String, Definition])(
-      ancestors:               Set[AnyVertex],
-      edge:                    AnyEdge
+      ancestors: Set[AnyVertex],
+      edge:      AnyEdge
   ): Map[String, Definition] =
     edge match {
       case Flow(_, a @ Aggregation(_, aggFunction, _, _)) if !acc.contains(a.label) =>
