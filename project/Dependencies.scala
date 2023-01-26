@@ -20,7 +20,7 @@ object Dependencies {
   }
 
   object Logging {
-    lazy val `log4j-over-slf4j` = "org.slf4j"      % "log4j-over-slf4j" % "2.0.5"
+    lazy val `log4j-over-slf4j` = "org.slf4j"      % "log4j-over-slf4j" % "2.0.6"
     lazy val logback            = "ch.qos.logback" % "logback-classic"  % "1.4.5"
   }
 

@@ -21,8 +21,8 @@ package object sdk {
     CanMakeEdge[Lake[DATA], Flow, Transformation[DATA, OUT]](Flow)
 
   def aggregation[IN <: Product, OUT <: Product](name: String, f: AggregationFunction)(implicit
-      inTypeTag:                                       WeakTypeTag[IN],
-      outTypeTag:                                      WeakTypeTag[OUT]
+      inTypeTag:  WeakTypeTag[IN],
+      outTypeTag: WeakTypeTag[OUT]
   ): Transformation[IN, OUT] = Aggregation(name, f, extractFQN(inTypeTag), extractFQN(outTypeTag))
 
   def lake[DATA <: Product : ZSchema](name: String)(implicit
