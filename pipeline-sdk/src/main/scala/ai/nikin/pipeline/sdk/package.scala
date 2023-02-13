@@ -19,14 +19,14 @@ package object sdk {
 
   implicit def toGraph[V <: Vertex[V]](v: PipelineBuilder[V]): PipelineDef = v.graph
 
-  implicit def toPipelineBuilder[V <: Vertex[V]](v: V): PipelineBuilder[V] = PipelineBuilder(v, PipelineDef.empty)
+  implicit def toPipelineBuilder[V <: Vertex[V]](v: V): PipelineBuilder[V] =
+    PipelineBuilder(v, PipelineDef.empty)
 
   case class PipelineBuilder[SELF <: Vertex[SELF]](v: SELF, graph: PipelineDef) {
     def >>>[
-      V <: VertexTO[SELF, V]
-    ](next: V)(implicit @unused ev: CanMakeEdge[SELF, V]): PipelineBuilder[V] = {
+        V <: VertexTO[SELF, V]
+    ](next: V)(implicit @unused ev: CanMakeEdge[SELF, V]): PipelineBuilder[V] =
       PipelineBuilder(next, graph + v ~> next)
-    }
   }
 
   type VertexTO[FROM <: Vertex[FROM], TO <: Vertex[TO] { type IN = FROM#OUT }] =
