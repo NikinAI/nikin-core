@@ -2,9 +2,14 @@ package ai.nikin.pipeline
 package model
 
 import io.scalaland.chimney.dsl._
-import sdk._
 
 package object dsl {
+
+  sealed abstract class Vertex[SELF <: Vertex[SELF]](val name: String) {
+    type IN
+    type OUT
+  }
+
   sealed trait UntypedVertex {
     def name: String
   }

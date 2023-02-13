@@ -1,6 +1,8 @@
-package ai.nikin.pipeline.sdk
+package ai.nikin.pipeline
+package sdk
 
 import scala.annotation.implicitNotFound
+import model.dsl._
 
 @implicitNotFound("""Connecting
     ${FROM}
