@@ -17,22 +17,21 @@ package object sdk {
 
   object PipelineDef extends TypedGraphFactory[Vertex[_], DiEdge[Vertex[_]]]
 
-  implicit def toGraph[V <: Vertex[V]](v: V): PipelineDef = v.graph
+  implicit def toGraph[V <: Vertex[V]](v: PipelineBuilder[V]): PipelineDef = v.graph
+
+  implicit def toPipelineStep[V <: Vertex[V]](v: V): PipelineBuilder[V] = PipelineBuilder(v, PipelineDef.empty)
+
+  case class PipelineBuilder[SELF <: Vertex[SELF]](v: SELF, graph: PipelineDef) {
+    def >>>[
+      V <: VertexTO[SELF, V]
+    ](next: V)(implicit @unused ev: CanMakeEdge[SELF, V]): PipelineBuilder[V] = {
+      PipelineBuilder(next, graph + v ~> next)
+    }
+  }
 
   abstract class Vertex[SELF <: Vertex[SELF]](val name: String) {
     type IN
     type OUT
-
-    private[sdk] var graph: PipelineDef = PipelineDef.empty
-
-    private[sdk] def addEdge[V <: Vertex[V]](next: V): V = {
-      next.graph = this.graph + this ~> next
-      next
-    }
-
-    def >>>[
-        V <: VertexTO[SELF, V]
-    ](next: V)(implicit @unused ev: CanMakeEdge[SELF, V]): V = addEdge(next)
   }
 
   type VertexTO[FROM <: Vertex[FROM], TO <: Vertex[TO] { type IN = FROM#OUT }] =
