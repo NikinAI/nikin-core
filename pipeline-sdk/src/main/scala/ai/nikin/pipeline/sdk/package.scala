@@ -16,7 +16,7 @@ package object sdk {
 
   type PipelineDef = Graph[Vertex[_], DiEdge]
 
-  implicit def toGraph[V <: Vertex[V]](v: PipelineBuilder[V]): PipelineDef = v.graph
+  implicit def toGraph[V <: Vertex[V]](pb: PipelineBuilder[V]): PipelineDef = pb.graph
 
   implicit def toPipelineBuilder[V <: Vertex[V]](v: V): PipelineBuilder[V] =
     PipelineBuilder(v, Graph.empty[Vertex[_], DiEdge])
@@ -58,7 +58,8 @@ package object sdk {
 
   @compileTimeOnly("enable macro paradise")
   class Schema extends StaticAnnotation {
-    def macroTransform(annottees: Any*): Any = macro SchemaMacro.impl
+    @unused
+    def macroTransform(@unused annottees: Any*): Any = macro SchemaMacro.impl
   }
 
   object SchemaMacro {
