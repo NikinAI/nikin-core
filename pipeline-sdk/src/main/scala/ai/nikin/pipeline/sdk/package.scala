@@ -22,11 +22,19 @@ package object sdk {
   implicit def toPipelineBuilder[V <: Vertex[V]](v: V): PipelineBuilder[V] =
     PipelineBuilder(v, PipelineDef.empty)
 
-  case class PipelineBuilder[SELF <: Vertex[SELF]](v: SELF, graph: PipelineDef) {
+  class PipelineBuilder[SELF <: Vertex[SELF]](
+      private[sdk] val v:     SELF,
+      private[sdk] val graph: PipelineDef
+  ) {
     def >>>[
         V <: VertexTO[SELF, V]
     ](next: V)(implicit @unused ev: CanMakeEdge[SELF, V]): PipelineBuilder[V] =
       PipelineBuilder(next, graph + v ~> next)
+  }
+
+  private object PipelineBuilder {
+    def apply[V <: Vertex[V]](v: V, graph: PipelineDef): PipelineBuilder[V] =
+      new PipelineBuilder(v, graph)
   }
 
   type VertexTO[FROM <: Vertex[FROM], TO <: Vertex[TO] { type IN = FROM#OUT }] =
