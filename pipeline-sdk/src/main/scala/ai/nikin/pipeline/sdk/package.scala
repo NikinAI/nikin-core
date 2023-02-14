@@ -10,17 +10,16 @@ import zio.schema.{Schema => ZSchema}
 
 package object sdk {
 
-  import scalax.collection.edges.{DiEdge, DiEdgeImplicits}
-  import scalax.collection.immutable.{Graph, TypedGraphFactory}
+  import scalax.collection.GraphEdge.DiEdge
+  import scalax.collection.immutable.Graph
+  import scalax.collection.GraphPredef._
 
-  type PipelineDef = Graph[Vertex[_], DiEdge[Vertex[_]]]
-
-  object PipelineDef extends TypedGraphFactory[Vertex[_], DiEdge[Vertex[_]]]
+  type PipelineDef = Graph[Vertex[_], DiEdge]
 
   implicit def toGraph[V <: Vertex[V]](v: PipelineBuilder[V]): PipelineDef = v.graph
 
   implicit def toPipelineBuilder[V <: Vertex[V]](v: V): PipelineBuilder[V] =
-    PipelineBuilder(v, PipelineDef.empty)
+    PipelineBuilder(v, Graph.empty[Vertex[_], DiEdge])
 
   class PipelineBuilder[SELF <: Vertex[SELF]](
       private[sdk] val v:     SELF,
@@ -29,7 +28,7 @@ package object sdk {
     def >>>[
         V <: VertexTO[SELF, V]
     ](next: V)(implicit @unused ev: CanMakeEdge[SELF, V]): PipelineBuilder[V] =
-      PipelineBuilder(next, graph + v ~> next)
+      PipelineBuilder(next, graph ++ Set(v ~> next))
   }
 
   private object PipelineBuilder {

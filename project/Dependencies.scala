@@ -29,7 +29,7 @@ object Dependencies {
   }
 
   object ScalaGraph {
-    lazy val core = "org.scala-graph" %% "graph-core" % "2.0.0"
+    lazy val core = "org.scala-graph" %% "graph-core" % "1.13.5"
   }
 
   object Scalaland {

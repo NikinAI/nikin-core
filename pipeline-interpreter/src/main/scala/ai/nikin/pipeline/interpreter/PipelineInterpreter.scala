@@ -7,17 +7,19 @@ import ai.nikin.pipeline.interpreter.Definition.{
 import ai.nikin.pipeline.model.dsl._
 import ai.nikin.pipeline.sdk._
 import AggregationFunction.{Avg, Count, Max, Min, Sum}
-import scalax.collection.edges.DiEdge
+import scalax.collection.GraphEdge.DiEdge
 
 object PipelineInterpreter {
-  def process(pipeline: PipelineDef): Seq[Definition] =
-    pipeline
-      .foldLeft(Map.empty[String, Definition])(
-        { case (acc, vertex) => processVertex(acc)(vertex) },
-        { case (acc, edge) => processEdge(acc, edge) }
-      )
+  def process(pipeline: PipelineDef): Seq[Definition] = {
+    val nodes = pipeline.nodes.toOuter
+    val edges = pipeline.edges.toOuter
+    edges
+      .foldLeft(nodes.foldLeft(Map.empty[String, Definition]) {
+        case (acc, vertex) => processVertex(acc)(vertex)
+      }) { case (acc, edge) => processEdge(acc, edge) }
       .values
       .toSeq
+  }
 
   // TODO refactor duplicated code
   private def processEdge(
