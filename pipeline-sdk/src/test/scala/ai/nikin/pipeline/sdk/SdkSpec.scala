@@ -24,7 +24,7 @@ class SdkSpec extends TestUtils {
       compileErrors(
         """ lake[RecordB]("t1") >>> lake[RecordB]("t2") """
       ),
-      "To enable this connectivity, add:"
+      "is not allowed!"
     )
   }
 

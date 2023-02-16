@@ -8,13 +8,7 @@ import model.dsl._
     ${FROM}
 to
     ${TO}
-is not allowed with your current setup!
-
-To enable this connectivity, add:
-
-----
-    implicit val ev = CanMakeEdge[${FROM}, ${EDGE}, ${TO}]()
-----
+is not allowed!
 
 In the scope of:
   """)
