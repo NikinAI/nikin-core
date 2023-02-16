@@ -51,6 +51,9 @@ package object sdk {
 
   private[sdk] def extractFQN[T](typeTag: WeakTypeTag[T]): String = typeTag.tpe.typeSymbol.fullName
 
+  implicit def schemaGen[T]: ZSchema[T] = macro zio.schema.DeriveSchema.genImpl[T]
+
+  // TODO We keep the Schema macro & annotation as a noop, because we expect it to become useful again in the near future
   @compileTimeOnly("enable macro paradise")
   class Schema extends StaticAnnotation {
     @unused
@@ -61,15 +64,8 @@ package object sdk {
     def impl(c: whitebox.Context)(annottees: c.Tree*): c.Tree = {
       import c.universe._
       annottees match {
-        case (cls @ q"$_ class $tpname[..$_] $_(...$_) extends { ..$_ } with ..$_ { $_ => ..$_ }") ::
-             Nil => q"""
-             $cls
-
-             object ${TermName(tpname.toString)} {
-               import zio.schema.{DeriveSchema, Schema}
-               implicit val schema: Schema[$tpname] = DeriveSchema.gen[$tpname]
-             }
-           """
+        case (cls @ q"$_ class $_[..$_] $_(...$_) extends { ..$_ } with ..$_ { $_ => ..$_ }") ::
+             Nil => q"""$cls"""
       }
     }
   }
