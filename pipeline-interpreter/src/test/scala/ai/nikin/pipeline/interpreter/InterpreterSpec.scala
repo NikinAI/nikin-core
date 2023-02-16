@@ -3,7 +3,7 @@ package ai.nikin.pipeline.interpreter
 import zio.Scope
 import zio.schema.{DeriveSchema, Schema}
 import zio.test.{ZIOSpecDefault, _}
-import Schemas._
+import Schemas._ // Do not remove
 
 object InterpreterSpec extends ZIOSpecDefault {
   case class Test(a: Int, b: Int)
@@ -47,19 +47,19 @@ object InterpreterSpec extends ZIOSpecDefault {
   case class TestMap(a: Map[Test, Int], b: Map[Int, String])
 
   object TestMap {
-    implicit val schema = DeriveSchema.gen[TestMap]
+    implicit val schema: Schema[TestMap] = DeriveSchema.gen[TestMap]
   }
 
   case class TestBinary(a: Array[Byte])
 
   object TestBinary {
-    implicit val schema = DeriveSchema.gen[TestBinary]
+    implicit val schema: Schema[TestBinary] = DeriveSchema.gen[TestBinary]
   }
 
   case class TestArrays(a: Array[Int], b: Seq[Int], c: Set[Int], d: List[Int])
 
   object TestArrays {
-    implicit val schema = DeriveSchema.gen[TestArrays]
+    implicit val schema: Schema[TestArrays] = DeriveSchema.gen[TestArrays]
   }
 
   override def spec: Spec[TestEnvironment with Scope, Any] =

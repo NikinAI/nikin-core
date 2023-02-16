@@ -21,20 +21,20 @@ object PipelineInterpreterSpec extends ZIOSpecDefault {
   @Schema
   case class RecordC(col1: Long)
 
-  val ddlLakeA =
+  private val ddlLakeA =
     s"""CREATE TABLE IF NOT EXISTS lA(
        |    col1 STRING NOT NULL,
        |    col2 INT NOT NULL
        |) USING DELTA
        |    LOCATION s3a://BUCKET_PLACEHOLDER/lA""".stripMargin
 
-  val ddlLakeB =
+  private val ddlLakeB =
     s"""CREATE TABLE IF NOT EXISTS lB(
        |    col1 STRING NOT NULL
        |) USING DELTA
        |    LOCATION s3a://BUCKET_PLACEHOLDER/lB""".stripMargin
 
-  val ddlLakeC =
+  private val ddlLakeC =
     s"""CREATE TABLE IF NOT EXISTS lC(
        |    col1 BIGINT NOT NULL
        |) USING DELTA

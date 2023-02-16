@@ -2,6 +2,7 @@ package ai.nikin.pipeline.interpreter
 
 import zio.schema.Schema
 
+import scala.annotation.unused
 import scala.reflect.ClassTag
 
 object Schemas {
@@ -10,7 +11,7 @@ object Schemas {
       schema,
       _.toSeq,
       zio.Chunk.fromIterable(_),
-      identity = identity(_)
+      identity = identity
     )
 
   implicit def setSchema[T](implicit schema: Schema[T]): Schema[Set[T]] =
@@ -18,15 +19,15 @@ object Schemas {
       schema,
       _.toSet,
       zio.Chunk.fromIterable(_),
-      identity = identity(_)
+      identity = identity
     )
 
-  implicit def arraySchema[T](implicit schema: Schema[T], ct: ClassTag[T]): Schema[Array[T]] =
+  implicit def arraySchema[T](implicit schema: Schema[T], @unused ct: ClassTag[T]): Schema[Array[T]] =
     Schema.Sequence[Array[T], T, T => T](
       schema,
       _.toArray,
       zio.Chunk.fromIterable(_),
-      identity = identity(_)
+      identity = identity
     )
 
   implicit def listSchema[T](implicit schema: Schema[T]): Schema[List[T]] =
@@ -34,6 +35,6 @@ object Schemas {
       schema,
       _.toList,
       zio.Chunk.fromIterable(_),
-      identity = identity(_)
+      identity = identity
     )
 }
