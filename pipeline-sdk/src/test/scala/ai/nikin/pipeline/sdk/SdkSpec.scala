@@ -6,10 +6,10 @@ import ai.nikin.pipeline.sdk.schemas.{RecordA, RecordB}
 
 class SdkSpec extends TestUtils {
   test("SDK - aggregation to lake") {
-    val pipeline: Transformation[RecordA, RecordB] F_>>> Lake[RecordB] =
+    val pipeline =
       aggregation[RecordA, RecordB]("s1", Sum("col1", "col2")) >>> lake[RecordB]("t1")
 
-    println(pipeline)
+    println(pipeline.graph)
 
     testContained(
       compileErrors(
@@ -33,8 +33,7 @@ class SdkSpec extends TestUtils {
       lake[RecordA]("lA") >>> aggregation[RecordA, RecordB]("tAB", Avg("col1", "col2")) >>>
         lake[RecordB]("lB")
 
-    println(pipeline.asGraph)
-    println(pipeline)
+    println(pipeline.graph)
   }
 
   test("SDK - Schema FQN is captured") {
