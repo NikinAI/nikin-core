@@ -22,7 +22,10 @@ object Schemas {
       identity = identity
     )
 
-  implicit def arraySchema[T](implicit schema: Schema[T], @unused ct: ClassTag[T]): Schema[Array[T]] =
+  implicit def arraySchema[T](implicit
+      schema:     Schema[T],
+      @unused ct: ClassTag[T]
+  ): Schema[Array[T]] =
     Schema.Sequence[Array[T], T, T => T](
       schema,
       _.toArray,
