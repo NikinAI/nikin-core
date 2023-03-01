@@ -4,7 +4,7 @@ object Dependencies {
 
   object Versions {
     val `zio-core`   = "2.0.9"
-    val `zio-schema` = "0.4.7"
+    val `zio-schema` = "0.4.8"
   }
 
   object Scala {
@@ -33,7 +33,7 @@ object Dependencies {
   }
 
   object Scalaland {
-    lazy val chimney = "io.scalaland" %% "chimney" % "0.6.2"
+    lazy val chimney = "io.scalaland" %% "chimney" % "0.7.0"
   }
 
 }
