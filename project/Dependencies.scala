@@ -3,7 +3,7 @@ import sbt._
 object Dependencies {
 
   object Versions {
-    val `zio-core`   = "2.0.9"
+    val `zio-core`   = "2.0.10"
     val `zio-schema` = "0.4.8"
   }
 
