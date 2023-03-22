@@ -4,7 +4,7 @@ object Dependencies {
 
   object Versions {
     val `zio-core`   = "2.0.10"
-    val `zio-schema` = "0.4.8"
+    val `zio-schema` = "0.4.9"
   }
 
   object Scala {
@@ -20,8 +20,8 @@ object Dependencies {
   }
 
   object Logging {
-    lazy val `log4j-over-slf4j` = "org.slf4j"      % "log4j-over-slf4j" % "2.0.6"
-    lazy val logback            = "ch.qos.logback" % "logback-classic"  % "1.4.5"
+    lazy val `log4j-over-slf4j` = "org.slf4j"      % "log4j-over-slf4j" % "2.0.7"
+    lazy val logback            = "ch.qos.logback" % "logback-classic"  % "1.4.6"
   }
 
   object Scalameta {
@@ -33,7 +33,7 @@ object Dependencies {
   }
 
   object Scalaland {
-    lazy val chimney = "io.scalaland" %% "chimney" % "0.7.0"
+    lazy val chimney = "io.scalaland" %% "chimney" % "0.7.1"
   }
 
 }
