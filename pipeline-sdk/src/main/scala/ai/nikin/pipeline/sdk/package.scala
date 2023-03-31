@@ -13,6 +13,7 @@ package object sdk {
   import scalax.collection.GraphEdge.DiEdge
   import scalax.collection.immutable.Graph
   import scalax.collection.GraphPredef._
+  import shapeless.HList
 
   type PipelineDef = Graph[Vertex[_], DiEdge]
 
@@ -28,7 +29,10 @@ package object sdk {
     def >>>[
         V <: VertexTO[SELF, V]
     ](next: V)(implicit @unused ev: CanMakeEdge[SELF, V]): PipelineBuilder[V] =
-      new PipelineBuilder(next, graph ++ Set(v ~> next))
+      v match {
+        case cb: CombinedLake[_] => new PipelineBuilder(next, graph ++ cb.lakes.map(_ ~> next))
+        case _ => new PipelineBuilder(next, graph ++ Set(v ~> next))
+      }
   }
 
   type VertexTO[FROM <: Vertex[FROM], TO <: Vertex[TO] { type IN = FROM#OUT }] =
@@ -40,6 +44,12 @@ package object sdk {
   implicit def lakeToTransform[DATA <: Product, OUT]: CanMakeEdge[Lake[DATA], Transformation[DATA, OUT]] =
     CanMakeEdge[Lake[DATA], Transformation[DATA, OUT]]()
 
+  implicit def combinedLakeToTransform[L <: HList, OUT]: CanMakeEdge[CombinedLake[L], Transformation[L, OUT]] =
+    CanMakeEdge[CombinedLake[L], Transformation[L, OUT]]()
+
+  implicit def transformToCombinedLake[DATA <: HList, IN]: CanMakeEdge[Transformation[IN, DATA], CombinedLake[DATA]] =
+    CanMakeEdge[Transformation[IN, DATA], CombinedLake[DATA]]()
+
   def aggregation[IN <: Product, OUT <: Product](name: String, f: AggregationFunction)(implicit
       inTypeTag:  WeakTypeTag[IN],
       outTypeTag: WeakTypeTag[OUT]
@@ -49,7 +59,7 @@ package object sdk {
       typeTag: WeakTypeTag[DATA]
   ): Lake[DATA] = Lake(name, extractFQN(typeTag))
 
-  private[sdk] def extractFQN[T](typeTag: WeakTypeTag[T]): String = typeTag.tpe.typeSymbol.fullName
+  private[sdk] def extractFQN[T](typeTag: WeakTypeTag[T]): String = typeTag.tpe.toString
 
   implicit def schemaGen[T]: ZSchema[T] = macro zio.schema.DeriveSchema.genImpl[T]
 

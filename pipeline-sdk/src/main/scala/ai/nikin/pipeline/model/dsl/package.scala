@@ -2,6 +2,7 @@ package ai.nikin.pipeline
 package model
 
 import io.scalaland.chimney.dsl._
+import shapeless.{::, HList, HNil}
 
 package object dsl {
 
@@ -23,7 +24,18 @@ package object dsl {
 
     lazy final val schema: zio.schema.Schema[DATA] = s
 
+    def &[T <: Product](l: Lake[T]): CombinedLake[T :: DATA :: HNil] =
+      CombinedLake[T :: DATA :: HNil](Set(this, l))
+
     def toUntyped: UntypedLake = this.transformInto[UntypedLake]
+  }
+
+  case class CombinedLake[L <: HList](lakes: Set[Lake[_]])
+      extends Vertex[CombinedLake[L]](s"combined-${lakes.map(_.name).mkString("&")}") {
+    final override type IN  = L
+    final override type OUT = L
+
+    def &[T <: Product](l: Lake[T]): CombinedLake[T :: L] = CombinedLake[T :: L](lakes + l)
   }
 
   sealed abstract class Transformation[_IN, _OUT](n: String)

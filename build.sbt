@@ -63,7 +63,8 @@ lazy val `pipeline-sdk` =
           ZIO.core,
           ZIO.schema,
           ZIO.schemaDerivation,
-          Scalaland.chimney
+          Scalaland.chimney,
+          "com.chuusai" %% "shapeless" % "2.3.10"
         )
     )
     .dependsOn(`pipeline-dsl-macros`)
