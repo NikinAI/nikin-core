@@ -1,6 +1,6 @@
 import Dependencies._
 
-ThisBuild / scalaVersion     := "2.13.10"
+ThisBuild / scalaVersion     := "2.13.15"
 ThisBuild / version          := "0.1.0-SNAPSHOT"
 ThisBuild / organization     := "ai.nikin"
 ThisBuild / organizationName := "NikinAI"
@@ -16,20 +16,20 @@ ThisBuild / scalacOptions ++=
     "-Ywarn-unused:privates", "-Ymacro-annotations"
   )
 
-ThisBuild / resolvers += "GitHub Package Registry (NikinAI/TypedGraph)" at
-  "https://maven.pkg.github.com/NikinAI/TypedGraph"
-
-ThisBuild / credentials +=
-  Credentials(
-    realm = "GitHub Package Registry",
-    host = "maven.pkg.github.com",
-    userName = "_",
-    passwd = {
-      import scala.util.Try
-      import scala.sys.process._
-      sys.env.getOrElse("GITHUB_TOKEN", Try(s"git config github.token".!!).map(_.trim).get)
-    }
-  )
+//ThisBuild / resolvers += "GitHub Package Registry (NikinAI/TypedGraph)" at
+//  "https://maven.pkg.github.com/NikinAI/TypedGraph"
+//
+//ThisBuild / credentials +=
+//  Credentials(
+//    realm = "GitHub Package Registry",
+//    host = "maven.pkg.github.com",
+//    userName = "_",
+//    passwd = {
+//      import scala.util.Try
+//      import scala.sys.process._
+//      sys.env.getOrElse("GITHUB_TOKEN", Try(s"git config github.token".!!).map(_.trim).get)
+//    }
+//  )
 
 lazy val root = (project in file("."))
   .settings(

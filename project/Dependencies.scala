@@ -3,8 +3,8 @@ import sbt._
 object Dependencies {
 
   object Versions {
-    val `zio-core`   = "2.0.10"
-    val `zio-schema` = "0.4.9"
+    val `zio-core`   = "2.1.12"
+    val `zio-schema` = "1.3.0"
   }
 
   object Scala {
@@ -20,12 +20,12 @@ object Dependencies {
   }
 
   object Logging {
-    lazy val `log4j-over-slf4j` = "org.slf4j"      % "log4j-over-slf4j" % "2.0.7"
-    lazy val logback            = "ch.qos.logback" % "logback-classic"  % "1.4.6"
+    lazy val `log4j-over-slf4j` = "org.slf4j"      % "log4j-over-slf4j" % "2.0.13"
+    lazy val logback            = "ch.qos.logback" % "logback-classic"  % "1.5.6"
   }
 
   object Scalameta {
-    lazy val munit = "org.scalameta" %% "munit" % "0.7.29"
+    lazy val munit = "org.scalameta" %% "munit" % "1.0.0"
   }
 
   object ScalaGraph {
@@ -33,7 +33,7 @@ object Dependencies {
   }
 
   object Scalaland {
-    lazy val chimney = "io.scalaland" %% "chimney" % "0.7.1"
+    lazy val chimney = "io.scalaland" %% "chimney" % "1.2.0"
   }
 
 }
