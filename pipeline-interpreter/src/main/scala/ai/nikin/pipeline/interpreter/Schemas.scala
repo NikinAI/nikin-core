@@ -32,6 +32,10 @@ object Schemas {
       zio.Chunk.fromIterable(_),
       identity = identity
     )
+    
+  // TODO review and remove when root problem is found
+  implicit val x: Schema[Array[Int]] = arraySchema[Int]
+  implicit val y: Schema[Array[Byte]] = arraySchema[Byte]
 
   implicit def listSchema[T](implicit schema: Schema[T]): Schema[List[T]] =
     Schema.Sequence[List[T], T, T => T](

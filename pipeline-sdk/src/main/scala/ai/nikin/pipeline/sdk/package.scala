@@ -1,7 +1,9 @@
 package ai.nikin.pipeline
 
 import ai.nikin.pipeline.model.dsl._
-import scala.annotation.{compileTimeOnly, unused, StaticAnnotation}
+import scalax.collection.edges.DiEdgeImplicits
+
+import scala.annotation.{StaticAnnotation, compileTimeOnly, unused}
 import scala.language.experimental.macros
 import scala.language.implicitConversions
 import scala.reflect.runtime.universe._
@@ -10,16 +12,15 @@ import zio.schema.{Schema => ZSchema}
 
 package object sdk {
 
-  import scalax.collection.GraphEdge.DiEdge
+  import scalax.collection.edges.DiEdge
   import scalax.collection.immutable.Graph
-  import scalax.collection.GraphPredef._
 
-  type PipelineDef = Graph[Vertex[_], DiEdge]
+  type PipelineDef = Graph[Vertex[_], DiEdge[Vertex[_]]]
 
   implicit def toGraph[V <: Vertex[V]](pb: PipelineBuilder[V]): PipelineDef = pb.graph
 
   implicit def toPipelineBuilder[V <: Vertex[V]](v: V): PipelineBuilder[V] =
-    new PipelineBuilder(v, Graph.empty[Vertex[_], DiEdge])
+    new PipelineBuilder(v, Graph.empty[Vertex[_], DiEdge[Vertex[_]]])
 
   class PipelineBuilder[SELF <: Vertex[SELF]] private[sdk] (
       private[sdk] val v:     SELF,
