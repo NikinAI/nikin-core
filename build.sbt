@@ -39,7 +39,8 @@ lazy val root = (project in file("."))
     `pipeline-dsl-macros`,
     `pipeline-sdk`,
     `pipeline-interpreter`,
-    `pipeline-deployment-gha`
+    `pipeline-deployment-gha`,
+    `spark-deployment-model`
   )
 
 lazy val `pipeline-dsl-macros` =
@@ -76,5 +77,10 @@ lazy val `pipeline-interpreter` = (project in file("./pipeline-interpreter"))
 
 lazy val `pipeline-deployment-gha` = (project in file("./pipeline-deployment-gha"))
   .dependsOn(`pipeline-interpreter`)
+
+lazy val `spark-deployment-model` = (project in file("./spark-deployment-model"))
+  .settings(
+    libraryDependencies ++= List(ZIO.jsonMacros)
+  )
 
 addCommandAlias("runScalafmt", ";scalafmt;scalafmtSbt")
